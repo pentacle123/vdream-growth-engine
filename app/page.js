@@ -111,7 +111,7 @@ export default function Home() {
             <DiagnosticTab />
           </Suspense>
         )}
-        {tab === 1 && <ShortformTab />}
+        {tab === 1 && <ShortformTab onNavigateTab={setTab} />}
         {tab === 2 && <CreatorTab />}
         {tab === 3 && <CalendarTab />}
         {tab === 4 && <SearchDataTab />}
