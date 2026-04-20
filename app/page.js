@@ -8,6 +8,7 @@ import ShortformTab from "@/components/ShortformTab";
 import CreatorTab from "@/components/CreatorTab";
 import CalendarTab from "@/components/CalendarTab";
 import SearchDataTab from "@/components/SearchDataTab";
+import IntelligenceTab from "@/components/IntelligenceTab";
 
 const TABS = [
   { icon: "🏥", label: "AI 진단기" },
@@ -15,6 +16,7 @@ const TABS = [
   { icon: "🤝", label: "크리에이터" },
   { icon: "📅", label: "캘린더" },
   { icon: "📡", label: "검색데이터" },
+  { icon: "🎯", label: "타겟 인텔리전스" },
 ];
 
 export default function Home() {
@@ -115,6 +117,7 @@ export default function Home() {
         {tab === 2 && <CreatorTab />}
         {tab === 3 && <CalendarTab />}
         {tab === 4 && <SearchDataTab />}
+        {tab === 5 && <IntelligenceTab />}
       </div>
     </div>
   );
