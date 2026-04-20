@@ -5,6 +5,7 @@ import TabButton from "@/components/ui/TabButton";
 import Badge from "@/components/ui/Badge";
 import DiagnosticTab from "@/components/DiagnosticTab";
 import ShortformTab from "@/components/ShortformTab";
+import CreatorTab from "@/components/CreatorTab";
 
 const TABS = [
   { icon: "🏥", label: "AI 진단기" },
@@ -101,7 +102,7 @@ export default function Home() {
       <div style={{ padding: 18, maxWidth: 860, margin: "0 auto" }}>
         {tab === 0 && <DiagnosticTab />}
         {tab === 1 && <ShortformTab />}
-        {tab === 2 && <ComingSoon icon="🤝" label="크리에이터 매칭" />}
+        {tab === 2 && <CreatorTab />}
         {tab === 3 && <ComingSoon icon="📅" label="연간 캠페인 캘린더" />}
         {tab === 4 && <ComingSoon icon="📡" label="검색 데이터 분석" />}
       </div>
