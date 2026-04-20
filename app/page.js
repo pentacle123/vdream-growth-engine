@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import TabButton from "@/components/ui/TabButton";
 import Badge from "@/components/ui/Badge";
 import DiagnosticTab from "@/components/DiagnosticTab";
@@ -106,7 +106,11 @@ export default function Home() {
 
       {/* 본문 */}
       <div style={{ padding: 18, maxWidth: 860, margin: "0 auto" }}>
-        {tab === 0 && <DiagnosticTab />}
+        {tab === 0 && (
+          <Suspense fallback={null}>
+            <DiagnosticTab />
+          </Suspense>
+        )}
         {tab === 1 && <ShortformTab />}
         {tab === 2 && <CreatorTab />}
         {tab === 3 && <CalendarTab />}
