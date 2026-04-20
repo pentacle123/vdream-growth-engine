@@ -6,6 +6,7 @@ import Badge from "@/components/ui/Badge";
 import DiagnosticTab from "@/components/DiagnosticTab";
 import ShortformTab from "@/components/ShortformTab";
 import CreatorTab from "@/components/CreatorTab";
+import CalendarTab from "@/components/CalendarTab";
 
 const TABS = [
   { icon: "🏥", label: "AI 진단기" },
@@ -81,21 +82,29 @@ export default function Home() {
       <div
         style={{
           padding: "9px 18px",
-          display: "flex",
-          gap: 4,
           borderBottom: "1px solid rgba(255,255,255,0.05)",
           overflowX: "auto",
         }}
       >
-        {TABS.map((t, i) => (
-          <TabButton
-            key={i}
-            icon={t.icon}
-            label={t.label}
-            active={tab === i}
-            onClick={() => setTab(i)}
-          />
-        ))}
+        <div
+          style={{
+            display: "flex",
+            gap: 4,
+            justifyContent: "center",
+            minWidth: "max-content",
+            margin: "0 auto",
+          }}
+        >
+          {TABS.map((t, i) => (
+            <TabButton
+              key={i}
+              icon={t.icon}
+              label={t.label}
+              active={tab === i}
+              onClick={() => setTab(i)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* 본문 */}
@@ -103,7 +112,7 @@ export default function Home() {
         {tab === 0 && <DiagnosticTab />}
         {tab === 1 && <ShortformTab />}
         {tab === 2 && <CreatorTab />}
-        {tab === 3 && <ComingSoon icon="📅" label="연간 캠페인 캘린더" />}
+        {tab === 3 && <CalendarTab />}
         {tab === 4 && <ComingSoon icon="📡" label="검색 데이터 분석" />}
       </div>
     </div>
