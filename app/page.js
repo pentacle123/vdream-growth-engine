@@ -7,6 +7,7 @@ import DiagnosticTab from "@/components/DiagnosticTab";
 import ShortformTab from "@/components/ShortformTab";
 import CreatorTab from "@/components/CreatorTab";
 import CalendarTab from "@/components/CalendarTab";
+import SearchDataTab from "@/components/SearchDataTab";
 
 const TABS = [
   { icon: "🏥", label: "AI 진단기" },
@@ -15,24 +16,6 @@ const TABS = [
   { icon: "📅", label: "캘린더" },
   { icon: "📡", label: "검색데이터" },
 ];
-
-function ComingSoon({ icon, label }) {
-  return (
-    <div
-      style={{
-        textAlign: "center",
-        padding: "60px 20px",
-        color: "#64748B",
-      }}
-    >
-      <div style={{ fontSize: 42, marginBottom: 10 }}>{icon}</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: "#94A3B8", marginBottom: 4 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 12 }}>다음 단계에서 빌드 예정 탭입니다.</div>
-    </div>
-  );
-}
 
 export default function Home() {
   const [tab, setTab] = useState(0);
@@ -47,7 +30,15 @@ export default function Home() {
           background: "linear-gradient(180deg, #141d2e 0%, #060b14 100%)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            maxWidth: 860,
+            margin: "0 auto",
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <div
               style={{
@@ -81,29 +72,35 @@ export default function Home() {
       {/* 탭바 */}
       <div
         style={{
-          padding: "9px 18px",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
-          overflowX: "auto",
         }}
       >
         <div
           style={{
-            display: "flex",
-            gap: 4,
-            justifyContent: "center",
-            minWidth: "max-content",
+            padding: "9px 18px",
+            maxWidth: 860,
             margin: "0 auto",
+            overflowX: "auto",
+            whiteSpace: "nowrap",
           }}
         >
-          {TABS.map((t, i) => (
-            <TabButton
-              key={i}
-              icon={t.icon}
-              label={t.label}
-              active={tab === i}
-              onClick={() => setTab(i)}
-            />
-          ))}
+          <div
+            style={{
+              display: "inline-flex",
+              gap: 4,
+              verticalAlign: "middle",
+            }}
+          >
+            {TABS.map((t, i) => (
+              <TabButton
+                key={i}
+                icon={t.icon}
+                label={t.label}
+                active={tab === i}
+                onClick={() => setTab(i)}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -113,7 +110,7 @@ export default function Home() {
         {tab === 1 && <ShortformTab />}
         {tab === 2 && <CreatorTab />}
         {tab === 3 && <CalendarTab />}
-        {tab === 4 && <ComingSoon icon="📡" label="검색 데이터 분석" />}
+        {tab === 4 && <SearchDataTab />}
       </div>
     </div>
   );
