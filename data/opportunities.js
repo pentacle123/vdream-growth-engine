@@ -552,7 +552,7 @@ export const CTA_META = {
     label: "AI 진단기로 이동",
     emoji: "🔍",
     description: "우리 회사 고용부담금 즉시 계산",
-    tabIndex: 0, // 같은 앱 내 TAB 0
+    view: "diagnose", // 앱 내 뷰 키
   },
   consult: {
     label: "브이드림 무료 상담 신청",

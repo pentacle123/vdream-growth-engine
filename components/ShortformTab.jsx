@@ -36,7 +36,7 @@ const C = {
  * 메인 컨테이너 — 3-depth 상태머신
  * ============================================================ */
 
-export default function ShortformTab({ onNavigateTab }) {
+export default function ShortformTab({ onNavigate }) {
   const [view, setView] = useState({ type: "home" });
 
   const totalSearchVolume = useMemo(
@@ -62,7 +62,7 @@ export default function ShortformTab({ onNavigateTab }) {
         <OpportunityDetail
           id={view.id}
           onBack={() => goList(findOpportunity(view.id)?.category)}
-          onNavigateTab={onNavigateTab}
+          onNavigate={onNavigate}
         />
       )}
     </div>
@@ -489,7 +489,7 @@ function OpportunityCard({ opp, catColor, onClick }) {
  * Depth 2: 기회 상세
  * ============================================================ */
 
-function OpportunityDetail({ id, onBack, onNavigateTab }) {
+function OpportunityDetail({ id, onBack, onNavigate }) {
   const opp = findOpportunity(id);
   const cat = opp ? findCategory(opp.category) : null;
   const [scripts, setScripts] = useState({}); // { contentIndex: { hook, ... } | null }
@@ -741,11 +741,7 @@ function OpportunityDetail({ id, onBack, onNavigateTab }) {
         <SectionTitle color={C.ac}>🚀 이 기회의 CTA</SectionTitle>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {opp.ctas.map((ctaKey, i) => (
-            <CTAButton
-              key={i}
-              ctaKey={ctaKey}
-              onNavigateTab={onNavigateTab}
-            />
+            <CTAButton key={i} ctaKey={ctaKey} onNavigate={onNavigate} />
           ))}
         </div>
       </Card>
@@ -1025,7 +1021,7 @@ function SubSection({ label, color, children }) {
   );
 }
 
-function CTAButton({ ctaKey, onNavigateTab }) {
+function CTAButton({ ctaKey, onNavigate }) {
   const meta = CTA_META[ctaKey];
   if (!meta) return null;
 
@@ -1072,7 +1068,7 @@ function CTAButton({ ctaKey, onNavigateTab }) {
   if (isDiagnose) {
     return (
       <button
-        onClick={() => onNavigateTab && onNavigateTab(meta.tabIndex)}
+        onClick={() => onNavigate && onNavigate(meta.view)}
         style={{ ...baseStyle, border: "none", padding: "12px 14px" }}
       >
         {content}
