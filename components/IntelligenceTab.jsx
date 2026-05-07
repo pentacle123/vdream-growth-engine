@@ -9,9 +9,9 @@ import ProposalGenerator from "./intelligence/ProposalGenerator";
 import OutreachGenerator from "./intelligence/OutreachGenerator";
 
 const C = {
-  sf: "#0f1623",
+  sf: "#0c1220",
   sa: "#141d2e",
-  ac: "#36CFBA",
+  ac: "#00C9A7",
   bl: "#1D85EB",
   pp: "#A78BFA",
   wn: "#F59E0B",

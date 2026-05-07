@@ -14,7 +14,7 @@ export const CALENDAR = [
 export const FUNNEL_STAGES = [
   { label: "숏폼노출", icon: "📱", color: "#1D85EB" },
   { label: "후킹", icon: "👀", color: "#1D85EB" },
-  { label: "진단기", icon: "🔍", color: "#36CFBA" },
-  { label: "리드수집", icon: "📧", color: "#36CFBA" },
+  { label: "진단기", icon: "🔍", color: "#00C9A7" },
+  { label: "리드수집", icon: "📧", color: "#00C9A7" },
   { label: "계약", icon: "🤝", color: "#F59E0B" },
 ];

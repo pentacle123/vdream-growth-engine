@@ -1,4 +1,4 @@
-export default function Badge({ children, color = "#36CFBA", background }) {
+export default function Badge({ children, color = "#00C9A7", background }) {
   return (
     <span
       className="inline-block font-bold text-[11px]"

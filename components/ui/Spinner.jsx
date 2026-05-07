@@ -1,4 +1,4 @@
-export default function Spinner({ color = "#36CFBA", size = 16 }) {
+export default function Spinner({ color = "#00C9A7", size = 16 }) {
   return (
     <span
       className="inline-block"

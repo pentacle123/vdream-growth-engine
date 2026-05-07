@@ -14,10 +14,10 @@ import {
 import { formatWon } from "@/lib/calculate";
 
 const C = {
-  sf: "#0f1623",
+  sf: "#0c1220",
   sa: "#141d2e",
   sh: "#1a2540",
-  ac: "#36CFBA",
+  ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",

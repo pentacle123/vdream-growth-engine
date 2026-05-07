@@ -6,7 +6,7 @@ import { CALENDAR, FUNNEL_STAGES } from "@/data/calendar";
 
 const C = {
   sa: "#141d2e",
-  ac: "#36CFBA",
+  ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",

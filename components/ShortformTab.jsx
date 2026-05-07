@@ -16,11 +16,11 @@ import {
 import { SEARCH_DATA } from "@/data/searchData";
 
 const C = {
-  bg: "#060b14",
-  sf: "#0f1623",
+  bg: "#050a12",
+  sf: "#0c1220",
   sa: "#141d2e",
   sh: "#1a2540",
-  ac: "#36CFBA",
+  ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",

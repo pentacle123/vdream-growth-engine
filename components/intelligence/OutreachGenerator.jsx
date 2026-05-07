@@ -10,7 +10,7 @@ import { formatWon } from "@/lib/calculate";
 const C = {
   sa: "#141d2e",
   sh: "#1a2540",
-  ac: "#36CFBA",
+  ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",
@@ -29,7 +29,7 @@ const CHANNELS = [
 
 const TONES = [
   { key: "formal", label: "포멀", color: "#1D85EB" },
-  { key: "casual", label: "캐주얼", color: "#36CFBA" },
+  { key: "casual", label: "캐주얼", color: "#00C9A7" },
   { key: "urgent", label: "긴급", color: "#EF4444" },
 ];
 
@@ -133,7 +133,7 @@ export default function OutreachGenerator({
                 padding: "12px",
                 borderRadius: 10,
                 border: active ? `2px solid ${ch.brand}` : `1px solid ${C.bl2}`,
-                background: active ? `${ch.brand}14` : "#0f1623",
+                background: active ? `${ch.brand}14` : "#0c1220",
                 color: active ? ch.brand : C.td,
                 fontSize: 13,
                 fontWeight: active ? 800 : 600,
@@ -454,7 +454,7 @@ function LinkedInPreview({ data, company }) {
             width: 42,
             height: 42,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, #36CFBA, #1D85EB)",
+            background: "linear-gradient(135deg, #00C9A7, #1D85EB)",
             color: "#000",
             display: "flex",
             alignItems: "center",
@@ -546,7 +546,7 @@ function KakaoPreview({ data, company }) {
             width: 32,
             height: 32,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, #36CFBA, #1D85EB)",
+            background: "linear-gradient(135deg, #00C9A7, #1D85EB)",
             color: "#000",
             display: "flex",
             alignItems: "center",

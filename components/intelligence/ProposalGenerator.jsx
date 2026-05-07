@@ -20,7 +20,7 @@ import { formatWon } from "@/lib/calculate";
 const C = {
   sa: "#141d2e",
   sh: "#1a2540",
-  ac: "#36CFBA",
+  ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",
@@ -197,7 +197,7 @@ function ProposalDocument({
         style={{
           padding: 0,
           overflow: "hidden",
-          background: "linear-gradient(180deg, #0f1623 0%, #0a1018 100%)",
+          background: "linear-gradient(180deg, #0c1220 0%, #0a1018 100%)",
           border: `1px solid ${C.ac}33`,
           boxShadow: `0 0 40px ${C.ac}18`,
         }}
@@ -310,7 +310,7 @@ function ProposalDocument({
             padding: "12px",
             borderRadius: 10,
             border: `1px solid ${copied ? C.ac : C.bl2}`,
-            background: copied ? `${C.ac}14` : "#0f1623",
+            background: copied ? `${C.ac}14` : "#0c1220",
             color: copied ? C.ac : C.td,
             fontWeight: 700,
             fontSize: 12,
@@ -326,7 +326,7 @@ function ProposalDocument({
             padding: "12px",
             borderRadius: 10,
             border: `1px solid ${C.bl2}`,
-            background: "#0f1623",
+            background: "#0c1220",
             color: C.td,
             fontWeight: 700,
             fontSize: 12,

@@ -1,34 +1,47 @@
 "use client";
 
-import Card from "./ui/Card";
-import Badge from "./ui/Badge";
 import { OPPORTUNITIES } from "@/data/opportunities";
-import { TARGET_COMPANIES, computeROI } from "@/data/targetCompanies";
+import { TARGET_COMPANIES } from "@/data/targetCompanies";
 
 const C = {
-  bg: "#060b14",
-  sf: "#0f1623",
+  bg: "#050a12",
+  sf: "#0c1220",
   sa: "#141d2e",
-  ac: "#36CFBA",
+  ac: "#00C9A7",
   bl: "#1D85EB",
   pp: "#A78BFA",
-  wn: "#F59E0B",
+  am: "#F59E0B",
   t: "#E2E8F0",
   td: "#94A3B8",
   tm: "#64748B",
   bl2: "rgba(255,255,255,0.08)",
 };
 
-// 3 기능 카드 정의 — 스펙대로 좌측 액센트 바 컬러 유지
 const FEATURES = [
+  {
+    key: "performance",
+    icon: "🎯",
+    accent: "#00C9A7",
+    emojiGroup: ["📊", "🎨", "📐", "🧠", "📈"],
+    title: "DA 퍼포먼스 랩",
+    description:
+      "캠페인 진단부터 랜딩·배너 자동 생성까지. 광고 데이터 기반 KPI 진단과 크리에이티브 자동화 모듈.",
+    stats: ["Beta 모듈", "광고 데이터 기반"],
+    previews: [
+      { emoji: "📊", title: "캠페인 진단", desc: "KPI 분석 + 개선 액션" },
+      { emoji: "🎨", title: "랜딩 페이지 자동 생성", desc: "제품 정보 → LP 카피·디자인" },
+      { emoji: "📐", title: "배너 크리에이티브", desc: "사이즈·플랫폼별 자동 생성" },
+    ],
+    cta: "퍼포먼스 랩 보기",
+  },
   {
     key: "opportunities",
     icon: "🔍",
-    accent: "#00C9A7",
+    accent: "#1D85EB",
     emojiGroup: ["💰", "🏠", "⚡", "🛡️", "📋", "🏆"],
     title: "기회 발견 & 콘텐츠 전략",
     description:
-      "브이드림 USP · 제도 상황 · 숨겨진 관심사에서 출발한 숏폼 기회를 발견하고 AI가 스크립트까지 생성합니다.",
+      "브이드림 USP · 제도 상황 · 숨겨진 관심사에서 출발한 18개 숏폼 기회. AI가 스크립트까지 생성합니다.",
     stats: ["18개 기회", "연간 57,000회+ 검색"],
     previews: [
       { emoji: "💰", title: "부담금보다 싸다", desc: "비용 비교 충격형" },
@@ -40,7 +53,7 @@ const FEATURES = [
   {
     key: "diagnose",
     icon: "🏥",
-    accent: "#1D85EB",
+    accent: "#A78BFA",
     emojiGroup: ["🏥", "📊", "🤖", "📋", "💡"],
     title: "AI 고용부담금 진단기",
     description:
@@ -56,12 +69,12 @@ const FEATURES = [
   {
     key: "intelligence",
     icon: "🎯",
-    accent: "#A78BFA",
+    accent: "#F59E0B",
     emojiGroup: ["🎯", "📋", "🤖", "📧", "🏆"],
     title: "타겟 기업 인텔리전스",
     description:
       "고용노동부 공표 불이행 기업 → AI 우선순위 → 맞춤 제안서 → 이메일·링크드인·카톡 메시지까지 자동화.",
-    stats: [], // 동적 계산
+    stats: [],
     previews: [
       { emoji: "📋", title: "불이행 기업 DB", desc: "AI 우선순위 + 파이프라인" },
       { emoji: "🤖", title: "맞춤 제안서 생성", desc: "ROI 차트 + 1페이지 자동 작성" },
@@ -72,47 +85,44 @@ const FEATURES = [
 ];
 
 export default function HomeView({ onNavigate }) {
-  // 동적 통계
   const totalPenalty = TARGET_COMPANIES.reduce(
     (acc, c) => acc + c.estimatedPenalty,
     0
   );
   const totalPenaltyText = `${Math.round(totalPenalty / 1e8).toLocaleString("ko-KR")}억원+`;
 
-  // intelligence 카드 stats 동적 주입
-  const features = FEATURES.map((f) => {
-    if (f.key === "intelligence") {
-      return {
-        ...f,
-        stats: [`${TARGET_COMPANIES.length}개 타겟 기업`, `총 부담금 ${totalPenaltyText}`],
-      };
-    }
-    return f;
-  });
+  const features = FEATURES.map((f) =>
+    f.key === "intelligence"
+      ? {
+          ...f,
+          stats: [
+            `${TARGET_COMPANIES.length}개 타겟 기업`,
+            `총 부담금 ${totalPenaltyText}`,
+          ],
+        }
+      : f
+  );
 
   return (
     <div>
-      {/* ============================================================
-       * HERO
-       * ============================================================ */}
+      {/* HERO */}
       <section
         style={{
-          padding: "72px 20px 56px",
+          padding: "76px 20px 56px",
           textAlign: "center",
           position: "relative",
         }}
       >
-        {/* 백그라운드 글로우 장식 */}
         <div
           aria-hidden
           style={{
             position: "absolute",
-            top: 40,
+            top: 30,
             left: "50%",
             transform: "translateX(-50%)",
-            width: 580,
-            height: 380,
-            background: `radial-gradient(ellipse, ${C.ac}0c 0%, transparent 70%)`,
+            width: 620,
+            height: 420,
+            background: `radial-gradient(ellipse, ${C.ac}10 0%, transparent 70%)`,
             pointerEvents: "none",
             zIndex: 0,
           }}
@@ -121,11 +131,11 @@ export default function HomeView({ onNavigate }) {
           aria-hidden
           style={{
             position: "absolute",
-            top: 80,
-            right: "12%",
+            top: 70,
+            right: "10%",
             width: 220,
             height: 220,
-            background: `radial-gradient(circle, ${C.bl}12 0%, transparent 70%)`,
+            background: `radial-gradient(circle, ${C.bl}14 0%, transparent 70%)`,
             pointerEvents: "none",
             zIndex: 0,
           }}
@@ -134,11 +144,11 @@ export default function HomeView({ onNavigate }) {
           aria-hidden
           style={{
             position: "absolute",
-            top: 140,
-            left: "12%",
-            width: 180,
-            height: 180,
-            background: `radial-gradient(circle, ${C.pp}14 0%, transparent 70%)`,
+            top: 130,
+            left: "10%",
+            width: 200,
+            height: 200,
+            background: `radial-gradient(circle, ${C.am}14 0%, transparent 70%)`,
             pointerEvents: "none",
             zIndex: 0,
           }}
@@ -160,11 +170,11 @@ export default function HomeView({ onNavigate }) {
           <h1
             style={{
               margin: 0,
-              fontSize: "clamp(36px, 6.4vw, 58px)",
+              fontSize: "clamp(38px, 6.6vw, 62px)",
               fontWeight: 900,
               lineHeight: 1.05,
-              letterSpacing: -1.2,
-              background: `linear-gradient(135deg, ${C.ac} 0%, ${C.bl} 55%, ${C.pp} 100%)`,
+              letterSpacing: -1.4,
+              background: `linear-gradient(135deg, ${C.ac} 0%, ${C.bl} 50%, ${C.pp} 100%)`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -177,15 +187,14 @@ export default function HomeView({ onNavigate }) {
             style={{
               fontSize: 15,
               color: C.td,
-              maxWidth: 640,
+              maxWidth: 660,
               margin: "22px auto 26px",
               lineHeight: 1.75,
-              fontWeight: 400,
             }}
           >
             장애인 고용의 숨겨진 기회를 발견하고, AI가 콘텐츠와 영업을 자동화하는 B2B 마케팅
-            플랫폼. 소비자 검색 데이터에서 출발해 숏폼 콘텐츠를 기획하고, 타겟 기업에 자동으로
-            제안합니다.
+            플랫폼. 검색 데이터에서 출발해 숏폼 콘텐츠를 기획하고, 타겟 기업에 자동으로
+            제안하고, 디지털 광고 크리에이티브까지 만듭니다.
           </p>
 
           <div
@@ -196,16 +205,15 @@ export default function HomeView({ onNavigate }) {
               flexWrap: "wrap",
             }}
           >
-            <HeroStat icon="🔍" label="전체 기회" value={`${OPPORTUNITIES.length}개`} color={C.ac} />
-            <HeroStat icon="📡" label="연간 검색량" value="57,000회+" color={C.bl} />
-            <HeroStat icon="🎯" label="타겟 기업" value={`${TARGET_COMPANIES.length}개`} color={C.pp} />
+            <HeroStat icon="🔍" label="기회" value={`${OPPORTUNITIES.length}개`} color={C.bl} />
+            <HeroStat icon="📡" label="연간 검색" value="57,000회+" color={C.ac} />
+            <HeroStat icon="🎯" label="타겟 기업" value={`${TARGET_COMPANIES.length}개`} color={C.am} />
+            <HeroStat icon="🤖" label="AI 모듈" value="5종" color={C.pp} />
           </div>
         </div>
       </section>
 
-      {/* ============================================================
-       * 3 FEATURE CARDS
-       * ============================================================ */}
+      {/* 4 FEATURE CARDS */}
       <section style={{ padding: "0 0 32px" }}>
         <div
           style={{
@@ -220,9 +228,7 @@ export default function HomeView({ onNavigate }) {
         </div>
       </section>
 
-      {/* ============================================================
-       * FOOTER BAR
-       * ============================================================ */}
+      {/* FOOTER */}
       <footer
         style={{
           textAlign: "center",
@@ -233,32 +239,29 @@ export default function HomeView({ onNavigate }) {
       >
         <div
           style={{
-            fontSize: 10,
+            fontSize: 11,
             fontWeight: 800,
             color: C.tm,
-            letterSpacing: 4,
+            letterSpacing: 5,
           }}
         >
-          PENTACLE × AI &nbsp;·&nbsp; ALGORITHM PERFORMANCE PLATFORM
+          PENTACLE × AI
         </div>
         <div
           style={{
-            fontSize: 10,
+            fontSize: 9,
             color: C.tm,
             marginTop: 6,
-            opacity: 0.6,
+            opacity: 0.7,
+            letterSpacing: 2,
           }}
         >
-          © 2026 Pentacle · Powered by Claude API · VDream Brandformance Engine
+          ALGORITHM PERFORMANCE PLATFORM · POWERED BY CLAUDE
         </div>
       </footer>
     </div>
   );
 }
-
-/* ============================================================
- * HERO STAT PILL
- * ============================================================ */
 
 function HeroStat({ icon, label, value, color }) {
   return (
@@ -269,7 +272,7 @@ function HeroStat({ icon, label, value, color }) {
         gap: 7,
         padding: "8px 14px",
         borderRadius: 999,
-        background: `${color}0f`,
+        background: `${color}10`,
         border: `1px solid ${color}33`,
       }}
     >
@@ -289,10 +292,6 @@ function HeroStat({ icon, label, value, color }) {
   );
 }
 
-/* ============================================================
- * FEATURE CARD
- * ============================================================ */
-
 function FeatureCard({ feature, onClick }) {
   const { icon, accent, emojiGroup, title, description, stats, previews, cta } = feature;
 
@@ -309,9 +308,9 @@ function FeatureCard({ feature, onClick }) {
         transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-3px)";
-        e.currentTarget.style.boxShadow = `0 14px 30px ${accent}26`;
-        e.currentTarget.style.borderColor = `${accent}55`;
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = `0 16px 36px ${accent}28`;
+        e.currentTarget.style.borderColor = `${accent}66`;
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0)";
@@ -319,7 +318,6 @@ function FeatureCard({ feature, onClick }) {
         e.currentTarget.style.borderColor = `${accent}22`;
       }}
     >
-      {/* 좌측 액센트 바 */}
       <div
         style={{
           position: "absolute",
@@ -333,7 +331,6 @@ function FeatureCard({ feature, onClick }) {
       />
 
       <div style={{ padding: "22px 20px 20px 26px" }}>
-        {/* 이모지 그룹 */}
         <div
           style={{
             display: "flex",
@@ -349,7 +346,6 @@ function FeatureCard({ feature, onClick }) {
           ))}
         </div>
 
-        {/* 타이틀 */}
         <h3
           style={{
             margin: 0,
@@ -366,7 +362,6 @@ function FeatureCard({ feature, onClick }) {
           {title}
         </h3>
 
-        {/* 설명 */}
         <p
           style={{
             margin: "8px 0 12px",
@@ -378,7 +373,6 @@ function FeatureCard({ feature, onClick }) {
           {description}
         </p>
 
-        {/* 통계 뱃지 */}
         {stats.length > 0 && (
           <div
             style={{
@@ -407,7 +401,6 @@ function FeatureCard({ feature, onClick }) {
           </div>
         )}
 
-        {/* 미리보기 3개 */}
         <div
           style={{
             display: "flex",
@@ -456,7 +449,6 @@ function FeatureCard({ feature, onClick }) {
           ))}
         </div>
 
-        {/* CTA 버튼 */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -479,7 +471,7 @@ function FeatureCard({ feature, onClick }) {
             transition: "background 0.15s ease",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = `${accent}22`;
+            e.currentTarget.style.background = `${accent}24`;
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = `${accent}12`;

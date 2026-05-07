@@ -7,7 +7,7 @@ export const CATEGORIES = [
     code: "A",
     title: "VDream USP 기반 기회",
     tagline: "브이드림의 핵심 가치제안에서 출발한 숏폼 콘텐츠 기회",
-    color: "#36CFBA",
+    color: "#00C9A7",
     icon: "💎",
   },
   {

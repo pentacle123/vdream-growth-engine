@@ -6,9 +6,9 @@ export default function TabButton({ icon, label, active, onClick }) {
       style={{
         padding: "7px 13px",
         borderRadius: 8,
-        border: active ? "1px solid rgba(54,207,186,0.27)" : "1px solid transparent",
-        background: active ? "rgba(54,207,186,0.12)" : "transparent",
-        color: active ? "#36CFBA" : "#94A3B8",
+        border: active ? "1px solid rgba(0,201,167,0.27)" : "1px solid transparent",
+        background: active ? "rgba(0,201,167,0.12)" : "transparent",
+        color: active ? "#00C9A7" : "#94A3B8",
         fontSize: 12,
         fontWeight: active ? 700 : 500,
       }}

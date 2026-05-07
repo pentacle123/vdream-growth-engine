@@ -45,7 +45,7 @@ export const PIPELINE_STATUSES = [
   { key: "untouched",  label: "미접촉",       color: "#64748B", icon: "○" },
   { key: "proposed",   label: "제안서 생성",  color: "#A78BFA", icon: "📄" },
   { key: "sent",       label: "이메일 발송",  color: "#1D85EB", icon: "📧" },
-  { key: "opened",     label: "열람 확인",    color: "#36CFBA", icon: "👁" },
+  { key: "opened",     label: "열람 확인",    color: "#00C9A7", icon: "👁" },
   { key: "replied",    label: "응답",         color: "#F59E0B", icon: "💬" },
   { key: "consulting", label: "상담 중",      color: "#EA580C", icon: "🤝" },
   { key: "contracted", label: "계약 완료",    color: "#10B981", icon: "✅" },
