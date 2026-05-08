@@ -15,6 +15,7 @@ import {
 import Card from "./ui/Card";
 import Badge from "./ui/Badge";
 import Spinner from "./ui/Spinner";
+import FAQSection from "./diagnostic/FAQSection";
 import { diagnose, formatWon } from "@/lib/calculate";
 import {
   INDUSTRY_AVG,
@@ -503,6 +504,16 @@ export default function DiagnosticTab() {
 
           {/* 2차 CTA — 브이드림 무료 상담 */}
           <VDreamCTA />
+
+          {/* FAQ + AI Q&A */}
+          <FAQSection
+            context={{
+              industry: form.industry,
+              employees: result.employees,
+              shortage: result.shortage,
+              annualPenalty: result.annualPenalty,
+            }}
+          />
         </>
       )}
     </div>
@@ -514,17 +525,29 @@ export default function DiagnosticTab() {
  * ============================================================ */
 
 function BenchmarkCard({ yourRate, industry }) {
+  const MANDATORY_RATE = 3.1;
   const avg = INDUSTRY_AVG[industry] ?? OVERALL_AVG;
   const cmp = compareToIndustry(yourRate, industry);
   const yourColor = cmp.belowAverage ? C.rd : C.ac;
 
+  // 4-bar 비교: 의무고용률 / 전체 평균 / 업종 평균 / 귀사
   const data = [
-    { name: "귀사", value: Number(yourRate.toFixed(2)), color: yourColor },
-    { name: `${industry} 평균`, value: avg, color: C.bl },
+    { name: "의무고용률", value: MANDATORY_RATE, color: C.am, isTarget: true },
     { name: "전체 평균", value: OVERALL_AVG, color: C.tm },
+    { name: `${industry} 평균`, value: avg, color: C.bl },
+    { name: "귀사", value: Number(yourRate.toFixed(2)), color: yourColor },
   ];
 
-  const maxVal = Math.max(...data.map((d) => d.value), 3.1) * 1.25;
+  // 업종 평균 대비 차이 (스펙: "{차이}%p 낮습니다")
+  const diffPp = Number((yourRate - avg).toFixed(2));
+  const diffText =
+    diffPp < -0.05
+      ? `귀사는 ${industry} 평균 대비 ${Math.abs(diffPp).toFixed(2)}%p 낮습니다`
+      : diffPp > 0.05
+      ? `귀사는 ${industry} 평균 대비 ${diffPp.toFixed(2)}%p 높습니다`
+      : `귀사는 ${industry} 평균과 거의 같은 수준입니다`;
+
+  const maxVal = Math.max(...data.map((d) => d.value), MANDATORY_RATE) * 1.25;
 
   return (
     <Card style={{ marginBottom: 12 }}>
@@ -542,7 +565,7 @@ function BenchmarkCard({ yourRate, industry }) {
         📊 동종업계 비교 벤치마크
       </h3>
       <div style={{ fontSize: 11, color: C.td, marginBottom: 10 }}>
-        귀사 실고용률 vs {industry} 평균 vs 전체 평균 (의무고용률 3.1%)
+        의무고용률 3.1% · 전체 평균 · {industry} 평균 · 귀사 실고용률 4-way 비교
       </div>
 
       <div style={{ width: "100%", height: 190 }}>
@@ -603,7 +626,7 @@ function BenchmarkCard({ yourRate, industry }) {
         }}
       >
         {cmp.belowAverage ? "⚠️ " : "✅ "}
-        {cmp.text}
+        {diffText}
         {cmp.belowAverage && (
           <span style={{ color: C.td, fontWeight: 400, marginLeft: 4 }}>
             — 브이드림 도입으로 업종 평균 이상 달성 가능
