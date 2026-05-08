@@ -2,19 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  LabelList,
-} from "recharts";
-import Card from "./ui/Card";
-import Badge from "./ui/Badge";
-import Spinner from "./ui/Spinner";
 import FAQSection from "./diagnostic/FAQSection";
 import { diagnose, formatWon } from "@/lib/calculate";
 import {
@@ -25,53 +12,173 @@ import {
   compareToIndustry,
 } from "@/data/industryBenchmarks";
 
-const C = {
-  sa: "#F1F5F9",
-  sh: "#E2E8F0",
-  ac: "#00C9A7",
-  ad: "rgba(0,201,167,0.12)",
-  bl: "#1D85EB",
-  bd: "rgba(29,133,235,0.12)",
-  wn: "#F59E0B",
-  rd: "#EF4444",
-  pp: "#A78BFA",
-  t: "#0F172A",
-  td: "#334155",
-  tm: "#64748B",
-  bl2: "#CBD5E1",
-};
+const NATIONAL_AVG = OVERALL_AVG; // 2.4%
+const MANDATORY = 3.1; // 의무고용률 %
 
-const INDUSTRIES = [
-  "제조업",
-  "IT/소프트웨어",
-  "금융/보험",
-  "유통/물류",
-  "건설",
-  "서비스업",
-  "공공기관",
-  "기타",
-];
+const fmt = (n) => new Intl.NumberFormat("ko-KR").format(n);
+
+const INDUSTRIES = Object.keys(INDUSTRY_AVG);
+
+/* ============================================================
+ * AnimNum — 부드러운 카운트업 애니메이션
+ * ============================================================ */
+function AnimNum({ value, prefix = "", suffix = "", color = "#00C9A7", size = 28, formatter }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    const end = Number(value) || 0;
+    const dur = 1200;
+    const startTime = Date.now();
+    let raf;
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / dur, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(eased * end);
+      if (progress < 1) raf = requestAnimationFrame(animate);
+    };
+    if (end > 0) raf = requestAnimationFrame(animate);
+    else setDisplay(0);
+    return () => raf && cancelAnimationFrame(raf);
+  }, [value]);
+
+  const text = formatter ? formatter(display) : `${prefix}${fmt(Math.floor(display))}${suffix}`;
+  return (
+    <span
+      style={{
+        fontSize: size,
+        fontWeight: 900,
+        color,
+        fontFamily: "'Outfit', 'Pretendard', 'Noto Sans KR', sans-serif",
+        letterSpacing: "-1.2px",
+        lineHeight: 1,
+      }}
+    >
+      {text}
+    </span>
+  );
+}
+
+/* ============================================================
+ * CompareBar — 의무고용률 마커 포함 가로 바 차트
+ * ============================================================ */
+function CompareBar({ label, value, max, color, highlight, isMandatory }) {
+  const pct = Math.min((value / max) * 100, 100);
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: highlight ? 700 : 500,
+            color: highlight ? "#0F172A" : "#64748B",
+          }}
+        >
+          {label}
+        </span>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 700,
+            color,
+            fontFamily: "'Outfit', sans-serif",
+          }}
+        >
+          {value.toFixed(1)}%
+        </span>
+      </div>
+      <div
+        style={{
+          height: 10,
+          borderRadius: 5,
+          background: "#F1F5F9",
+          overflow: "visible",
+          position: "relative",
+        }}
+      >
+        <div
+          style={{
+            width: `${pct}%`,
+            height: "100%",
+            borderRadius: 5,
+            background: highlight ? `linear-gradient(90deg, ${color}, ${color}cc)` : color,
+            transition: "width 1s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            boxShadow: highlight ? `0 0 12px ${color}44` : "none",
+          }}
+        />
+        {isMandatory && (
+          <div
+            style={{
+              position: "absolute",
+              left: `${pct}%`,
+              top: -4,
+              width: 2,
+              height: 18,
+              background: "#EF4444",
+              borderRadius: 1,
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: -18,
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontSize: 10,
+                fontWeight: 700,
+                color: "#EF4444",
+                whiteSpace: "nowrap",
+              }}
+            >
+              기준
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * Main Component
+ * ============================================================ */
 
 export default function DiagnosticTab() {
   const searchParams = useSearchParams();
-  const [form, setForm] = useState({ emp: "", cur: "", severe: 30, industry: "제조업" });
+  const [form, setForm] = useState({ emp: "", cur: "", severe: 30, ind: "제조업" });
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [shareState, setShareState] = useState("idle"); // idle | copied | error
+  const [shareState, setShareState] = useState("idle");
   const autoRanRef = useRef(false);
 
-  const [jobs, setJobs] = useState(null);
-  const [jobsLoading, setJobsLoading] = useState(false);
-  const [jobsFallback, setJobsFallback] = useState(false);
+  const [aiJobs, setAiJobs] = useState(null);
+  const [aiJobsLoading, setAiJobsLoading] = useState(false);
+  const [aiJobsFallback, setAiJobsFallback] = useState(false);
 
-  const [report, setReport] = useState(null);
-  const [reportLoading, setReportLoading] = useState(false);
-  const [reportFallback, setReportFallback] = useState(false);
+  const [aiReport, setAiReport] = useState(null);
+  const [aiReportLoading, setAiReportLoading] = useState(false);
+  const [aiReportFallback, setAiReportFallback] = useState(false);
 
-  const runDiagnosisWith = (vals) => {
+  /* ── 공유 링크 진입 시 자동 진단 실행 ────────────────────── */
+  useEffect(() => {
+    if (autoRanRef.current || !searchParams) return;
+    const emp = searchParams.get("emp");
+    if (!emp) return;
+    const cur = searchParams.get("cur") || "";
+    const svRaw = searchParams.get("sv");
+    const severe = Number.isFinite(Number(svRaw)) ? Number(svRaw) : 30;
+    const indCode = searchParams.get("ind");
+    const ind = CODE_INDUSTRY[indCode] || INDUSTRIES[0];
+    const vals = { emp, cur, severe, ind };
+    setForm(vals);
+    runDiagnosis(vals);
+    autoRanRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  const runDiagnosis = (vals = form) => {
     const employees = parseInt(vals.emp, 10);
     if (!Number.isFinite(employees) || employees < 50) {
-      setError("상시 근로자 수를 50명 이상으로 입력하세요.");
+      setError("상시 근로자 수를 50명 이상 입력하세요.");
       setResult(null);
       return;
     }
@@ -87,35 +194,18 @@ export default function DiagnosticTab() {
       return;
     }
     setResult(r);
-    setJobs(null);
-    setReport(null);
+    setAiJobs(null);
+    setAiReport(null);
   };
 
-  const runDiagnosis = () => runDiagnosisWith(form);
-
-  // URL 쿼리 파라미터로 들어온 경우 자동 계산 (공유 링크 수신 시나리오)
-  useEffect(() => {
-    if (autoRanRef.current || !searchParams) return;
-    const emp = searchParams.get("emp");
-    if (!emp) return;
-    const cur = searchParams.get("cur") || "";
-    const svRaw = searchParams.get("sv");
-    const severe = Number.isFinite(Number(svRaw)) ? Number(svRaw) : 30;
-    const indCode = searchParams.get("ind");
-    const industry = CODE_INDUSTRY[indCode] || INDUSTRIES[0];
-    const vals = { emp, cur, severe, industry };
-    setForm(vals);
-    runDiagnosisWith(vals);
-    autoRanRef.current = true;
-  }, [searchParams]);
-
+  /* ── 결과 공유 링크 ────────────────────── */
   const handleShare = async () => {
     if (!form.emp) return;
     const params = new URLSearchParams({
       emp: String(form.emp),
       cur: String(form.cur || 0),
       sv: String(form.severe),
-      ind: INDUSTRY_CODE[form.industry] || "etc",
+      ind: INDUSTRY_CODE[form.ind] || "etc",
     });
     const url = `${window.location.origin}/?${params.toString()}`;
     try {
@@ -123,740 +213,1168 @@ export default function DiagnosticTab() {
       setShareState("copied");
       setTimeout(() => setShareState("idle"), 2200);
     } catch {
-      // fallback: 구형 브라우저 또는 비 HTTPS
-      window.prompt("아래 URL을 복사하세요 (Ctrl+C → Enter):", url);
-      setShareState("idle");
+      window.prompt("아래 URL을 복사하세요:", url);
     }
   };
 
-  const requestJobs = async () => {
+  /* ── AI 직무 추천 / 경영진 리포트 ─────────────────────── */
+  const callAI = async (type) => {
     if (!result) return;
-    setJobsLoading(true);
-    setJobsFallback(false);
+    const isJob = type === "job";
+    if (isJob) {
+      setAiJobsLoading(true);
+      setAiJobsFallback(false);
+    } else {
+      setAiReportLoading(true);
+      setAiReportFallback(false);
+    }
     try {
-      const res = await fetch("/api/diagnose", {
+      const endpoint = isJob ? "/api/diagnose" : "/api/report";
+      const body = isJob
+        ? {
+            industry: form.ind,
+            employees: result.employees,
+            shortage: result.shortage,
+            hireNeeded: result.hireNeeded,
+          }
+        : { industry: form.ind, result };
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          industry: form.industry,
-          employees: result.employees,
-          shortage: result.shortage,
-          hireNeeded: result.hireNeeded,
-        }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
-      setJobs(data);
-      if (data.fallback) setJobsFallback(true);
+      if (isJob) {
+        setAiJobs(data);
+        setAiJobsFallback(!!data.fallback);
+      } else {
+        setAiReport(data);
+        setAiReportFallback(!!data.fallback);
+      }
     } catch {
-      setJobs({ jobs: [], tip: "네트워크 오류로 직무 추천을 불러오지 못했습니다." });
-      setJobsFallback(true);
+      if (isJob) {
+        setAiJobs({ jobs: [], tip: "네트워크 오류로 직무 추천을 불러오지 못했습니다." });
+        setAiJobsFallback(true);
+      } else {
+        setAiReport({
+          summary: "네트워크 오류로 리포트를 불러오지 못했습니다.",
+          risk: "",
+          recommendation: "",
+          timeline: "",
+        });
+        setAiReportFallback(true);
+      }
     } finally {
-      setJobsLoading(false);
+      if (isJob) setAiJobsLoading(false);
+      else setAiReportLoading(false);
     }
   };
 
-  const requestReport = async () => {
-    if (!result) return;
-    setReportLoading(true);
-    setReportFallback(false);
-    try {
-      const res = await fetch("/api/report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ industry: form.industry, result }),
-      });
-      const data = await res.json();
-      setReport(data);
-      if (data.fallback) setReportFallback(true);
-    } catch {
-      setReport({
-        summary: "네트워크 오류로 리포트를 불러오지 못했습니다.",
-        risk: "",
-        recommendation: "",
-        timeline: "",
-      });
-      setReportFallback(true);
-    } finally {
-      setReportLoading(false);
-    }
-  };
+  const industryBM = INDUSTRY_AVG[form.ind] ?? OVERALL_AVG;
+  const yourRate = result ? Number(result.effectiveRate) : 0;
+  const cmp = result ? compareToIndustry(yourRate, form.ind) : null;
 
   return (
-    <div>
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={{ fontSize: 19, fontWeight: 800, color: C.t, margin: 0 }}>
-          🏥 고용부담금 AI 진단기
-        </h2>
-        <p style={{ fontSize: 12, color: C.td, margin: "5px 0 0" }}>
-          기업 정보 입력 → 부담금·절감·맞춤직무·경영진 리포트 AI 생성
-        </p>
-      </div>
+    <div style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+        .vd-fadeUp { animation: fadeUp 0.6s ease forwards; }
+        .vd-st1 { animation-delay: 0.1s; opacity: 0; }
+        .vd-st2 { animation-delay: 0.2s; opacity: 0; }
+        .vd-st3 { animation-delay: 0.3s; opacity: 0; }
+        .vd-st4 { animation-delay: 0.4s; opacity: 0; }
+        .vd-pulse { animation: pulse 2s infinite; }
+      `}</style>
 
-      {/* 입력 폼 */}
-      <Card style={{ marginBottom: 16 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <NumField
-            label="상시 근로자 수"
-            unit="명"
-            placeholder="예: 500"
-            value={form.emp}
-            onChange={(v) => setForm((p) => ({ ...p, emp: v }))}
-          />
-          <NumField
-            label="현재 장애인 고용 수"
-            unit="명"
-            placeholder="예: 5"
-            value={form.cur}
-            onChange={(v) => setForm((p) => ({ ...p, cur: v }))}
-          />
-          <div>
-            <label style={labelStyle}>중증 비율: {form.severe}%</label>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={form.severe}
-              onChange={(e) => setForm((p) => ({ ...p, severe: +e.target.value }))}
-              style={{ width: "100%", accentColor: C.ac }}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>업종</label>
-            <select
-              value={form.industry}
-              onChange={(e) => setForm((p) => ({ ...p, industry: e.target.value }))}
-              style={{
-                width: "100%",
-                padding: "9px 12px",
-                borderRadius: 8,
-                border: `1px solid ${C.bl2}`,
-                background: C.sa,
-                color: C.t,
-                fontSize: 13,
-                outline: "none",
-                boxSizing: "border-box",
-              }}
-            >
-              {INDUSTRIES.map((v) => (
-                <option key={v}>{v}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <button
-          onClick={runDiagnosis}
+      {/* ── HERO ─────────────────────────────────────────── */}
+      <section
+        style={{
+          background:
+            "linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)",
+          padding: "60px 24px 80px",
+          position: "relative",
+          overflow: "hidden",
+          borderRadius: 20,
+          marginBottom: -40,
+        }}
+      >
+        <div
+          aria-hidden
           style={{
-            marginTop: 14,
-            width: "100%",
-            padding: "12px 0",
-            borderRadius: 10,
-            border: "none",
-            background: `linear-gradient(135deg, ${C.ac}, ${C.bl})`,
-            color: "#000",
-            fontSize: 14,
-            fontWeight: 800,
-            cursor: "pointer",
+            position: "absolute",
+            top: -100,
+            right: -100,
+            width: 400,
+            height: 400,
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(0,201,167,0.13), transparent 70%)",
+          }}
+        />
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            bottom: -80,
+            left: -80,
+            width: 300,
+            height: 300,
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(29,133,235,0.10), transparent 70%)",
+          }}
+        />
+        <div
+          style={{
+            maxWidth: 700,
+            margin: "0 auto",
+            position: "relative",
+            textAlign: "center",
           }}
         >
-          🔍 부담금 진단 실행
-        </button>
-
-        {error && (
           <div
             style={{
-              marginTop: 10,
-              padding: "8px 12px",
-              borderRadius: 8,
-              background: `${C.rd}10`,
-              border: `1px solid ${C.rd}33`,
-              color: C.rd,
-              fontSize: 12,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "6px 14px",
+              borderRadius: 20,
+              background: "rgba(0,201,167,0.12)",
+              border: "1px solid rgba(0,201,167,0.25)",
+              marginBottom: 20,
             }}
           >
-            ⚠️ {error}
+            <span
+              className="vd-pulse"
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#00C9A7",
+              }}
+            />
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#00C9A7",
+                letterSpacing: 0.5,
+              }}
+            >
+              AI POWERED DIAGNOSTIC
+            </span>
           </div>
-        )}
-      </Card>
+          <h1
+            style={{
+              fontSize: "clamp(28px, 4vw, 38px)",
+              fontWeight: 900,
+              color: "#FFFFFF",
+              lineHeight: 1.3,
+              marginBottom: 12,
+              fontFamily: "'Outfit', sans-serif",
+              margin: 0,
+            }}
+          >
+            우리 회사 고용부담금,
+            <br />
+            <span
+              style={{
+                background: "linear-gradient(90deg, #00C9A7, #1D85EB)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              얼마나 절감할 수 있을까?
+            </span>
+          </h1>
+          <p
+            style={{
+              fontSize: 16,
+              color: "#94A3B8",
+              lineHeight: 1.6,
+              maxWidth: 500,
+              margin: "16px auto 0",
+            }}
+          >
+            4가지 정보만 입력하면 AI가 부담금 진단, 맞춤 직무 추천,
+            <br />
+            경영진 보고 리포트까지 생성합니다
+          </p>
+        </div>
+      </section>
 
+      {/* ── FORM CARD (overlapping hero) ─────────────────── */}
+      <div
+        style={{
+          maxWidth: 680,
+          margin: "0 auto",
+          padding: "0 16px",
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
+        <div
+          style={{
+            background: "#FFFFFF",
+            borderRadius: 20,
+            padding: "32px 28px",
+            boxShadow:
+              "0 20px 60px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04)",
+            border: "1px solid #E2E8F0",
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 16,
+            }}
+          >
+            <NumField
+              icon="👥"
+              label="상시 근로자 수"
+              placeholder="예: 500"
+              value={form.emp}
+              onChange={(v) => setForm((p) => ({ ...p, emp: v }))}
+            />
+            <NumField
+              icon="♿"
+              label="현재 장애인 고용 수"
+              placeholder="예: 5"
+              value={form.cur}
+              onChange={(v) => setForm((p) => ({ ...p, cur: v }))}
+            />
+            <div>
+              <label
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#334155",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  marginBottom: 8,
+                }}
+              >
+                <span style={{ fontSize: 16 }}>📊</span>
+                중증 비율:{" "}
+                <span style={{ color: "#00C9A7", fontFamily: "'Outfit'" }}>
+                  {form.severe}%
+                </span>
+              </label>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={form.severe}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, severe: +e.target.value }))
+                }
+                style={{
+                  width: "100%",
+                  accentColor: "#00C9A7",
+                  height: 8,
+                  marginTop: 8,
+                }}
+              />
+            </div>
+            <div>
+              <label
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#334155",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  marginBottom: 8,
+                }}
+              >
+                <span style={{ fontSize: 16 }}>🏭</span>업종
+              </label>
+              <select
+                value={form.ind}
+                onChange={(e) => setForm((p) => ({ ...p, ind: e.target.value }))}
+                style={{
+                  width: "100%",
+                  padding: "14px 16px",
+                  borderRadius: 12,
+                  fontSize: 15,
+                  border: "2px solid #E2E8F0",
+                  background: "#F8FAFC",
+                  color: "#0F172A",
+                  fontWeight: 600,
+                  outline: "none",
+                  cursor: "pointer",
+                }}
+              >
+                {INDUSTRIES.map((v) => (
+                  <option key={v}>{v}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <button
+            onClick={() => runDiagnosis()}
+            style={{
+              marginTop: 24,
+              width: "100%",
+              padding: "16px 0",
+              borderRadius: 14,
+              border: "none",
+              cursor: "pointer",
+              background: "linear-gradient(135deg, #00C9A7 0%, #1D85EB 100%)",
+              color: "#FFFFFF",
+              fontSize: 16,
+              fontWeight: 800,
+              letterSpacing: 0.5,
+              boxShadow: "0 8px 24px rgba(0,201,167,0.3)",
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,201,167,0.4)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "";
+              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,201,167,0.3)";
+            }}
+          >
+            🔍 AI 진단 시작하기
+          </button>
+
+          {error && (
+            <div
+              style={{
+                marginTop: 12,
+                padding: "10px 14px",
+                borderRadius: 10,
+                background: "#FEF2F2",
+                border: "1px solid #FECACA",
+                color: "#991B1B",
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              ⚠️ {error}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── EMPTY STATE ──────────────────────────────────── */}
+      {!result && (
+        <div
+          style={{
+            maxWidth: 680,
+            margin: "40px auto",
+            padding: "0 16px",
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 12,
+            }}
+          >
+            {[
+              { icon: "📊", title: "즉시 산출", desc: "부담금·절감액·장려금" },
+              { icon: "🤖", title: "AI 직무 추천", desc: "업종별 맞춤 직무" },
+              {
+                icon: "📋",
+                title: "리포트 생성",
+                desc: "경영진 보고용 AI 리포트",
+              },
+            ].map((f, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#FFFFFF",
+                  borderRadius: 16,
+                  padding: "24px 16px",
+                  border: "1px solid #E2E8F0",
+                  textAlign: "center",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 8 }}>{f.icon}</div>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: "#0F172A",
+                    marginBottom: 4,
+                  }}
+                >
+                  {f.title}
+                </div>
+                <div style={{ fontSize: 12, color: "#64748B" }}>{f.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── RESULTS ──────────────────────────────────────── */}
       {result && (
-        <>
-          {/* 요약 3카드 */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 12 }}>
-            <Card glow>
-              <div style={miniLabel}>현재 연간 고용부담금</div>
-              <div style={{ ...bigNum, color: C.rd }}>{formatWon(result.annualPenalty)}</div>
-              <div style={miniDim}>미달 {result.shortage}명 × 12개월</div>
-            </Card>
-            <Card>
-              <div style={miniLabel}>도입 시 절감</div>
-              <div style={{ ...bigNum, color: C.ac }}>{formatWon(result.annualSaving)}</div>
-              <div style={miniDim}>중증 {result.hireNeeded}명 채용 기준</div>
-            </Card>
-            <Card>
-              <div style={miniLabel}>총 연간 이익</div>
-              <div style={{ ...bigNum, color: C.wn }}>{formatWon(result.totalBenefit)}</div>
-              <div style={miniDim}>절감 + 장려금</div>
-            </Card>
+        <div
+          style={{
+            maxWidth: 680,
+            margin: "32px auto 0",
+            padding: "0 16px",
+          }}
+        >
+          {/* Summary Cards (Animated) */}
+          <div
+            className="vd-fadeUp vd-st1"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 12,
+              marginBottom: 16,
+            }}
+          >
+            {[
+              {
+                label: "현재 연간 고용부담금",
+                value: result.annualPenalty,
+                color: "#EF4444",
+                sub: `미달 ${result.shortage}명`,
+              },
+              {
+                label: "브이드림 도입 시 절감",
+                value: result.annualSaving,
+                color: "#00C9A7",
+                sub: `중증 ${result.hireNeeded}명 채용`,
+              },
+              {
+                label: "총 연간 이익",
+                value: result.totalBenefit,
+                color: "#1D85EB",
+                sub: "절감 + 장려금",
+              },
+            ].map((c, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#FFFFFF",
+                  borderRadius: 16,
+                  padding: "20px 16px",
+                  textAlign: "center",
+                  border: "1px solid #E2E8F0",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 3,
+                    background: c.color,
+                  }}
+                />
+                <div
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: "#64748B",
+                    marginBottom: 8,
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  {c.label}
+                </div>
+                <AnimNum
+                  value={c.value}
+                  color={c.color}
+                  size={26}
+                  formatter={(v) => formatWon(v)}
+                />
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "#94A3B8",
+                    marginTop: 6,
+                  }}
+                >
+                  {c.sub}
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* 공유 링크 */}
-          <div style={{ marginBottom: 12 }}>
+          {/* Share Link */}
+          <div className="vd-fadeUp vd-st1" style={{ marginBottom: 20 }}>
             <button
               onClick={handleShare}
               style={{
                 width: "100%",
-                padding: "10px",
-                borderRadius: 10,
-                border: `1px solid ${shareState === "copied" ? C.ac : C.bl2}`,
-                background: shareState === "copied" ? `${C.ac}14` : "#F8FAFC",
-                color: shareState === "copied" ? C.ac : C.td,
-                fontSize: 12,
+                padding: "11px",
+                borderRadius: 12,
+                border: `1px solid ${
+                  shareState === "copied" ? "#00C9A7" : "#E2E8F0"
+                }`,
+                background:
+                  shareState === "copied"
+                    ? "rgba(0,201,167,0.08)"
+                    : "#FFFFFF",
+                color: shareState === "copied" ? "#00C9A7" : "#64748B",
+                fontSize: 13,
                 fontWeight: 700,
                 cursor: "pointer",
-                transition: "all 0.2s ease",
+                transition: "all 0.15s",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 8,
               }}
             >
-              {shareState === "copied" ? (
-                <>✅ 링크가 클립보드에 복사됐습니다 — 슬랙/메일로 공유하세요</>
-              ) : (
-                <>🔗 이 진단 결과를 링크로 공유</>
-              )}
+              {shareState === "copied"
+                ? "✅ 링크가 클립보드에 복사됐습니다 — 슬랙/메일로 공유하세요"
+                : "🔗 이 진단 결과를 링크로 공유"}
             </button>
           </div>
 
-          {/* 동종업계 비교 벤치마크 */}
-          <BenchmarkCard
-            yourRate={result.effectiveRate}
-            industry={form.industry}
-          />
-
-          {/* 상세 지표 */}
-          <Card style={{ marginBottom: 12 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
-              <Metric label="의무 고용 인원" value={`${result.mandatoryCount}명`} />
-              <Metric label="유효 고용 인원" value={`${result.effectiveCount}명`} sub={`(${result.effectiveRate}%)`} />
-              <Metric label="부족 인원" value={`${result.shortage}명`} color={C.rd} />
-              <Metric label="월 부담기초액" value={formatWon(result.baseAmount)} />
+          {/* Benchmark Chart */}
+          <div
+            className="vd-fadeUp vd-st2"
+            style={{
+              background: "#FFFFFF",
+              borderRadius: 16,
+              padding: 24,
+              marginBottom: 20,
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: 15,
+                fontWeight: 800,
+                color: "#0F172A",
+                marginBottom: 4,
+              }}
+            >
+              📊 업종별 고용률 벤치마크
+            </h3>
+            <p
+              style={{
+                fontSize: 12,
+                color: "#64748B",
+                marginBottom: 16,
+                lineHeight: 1.5,
+              }}
+            >
+              귀사는 {form.ind} 평균 대비{" "}
+              <span
+                style={{
+                  color: yourRate < industryBM ? "#EF4444" : "#10B981",
+                  fontWeight: 700,
+                }}
+              >
+                {Math.abs(yourRate - industryBM).toFixed(1)}%p{" "}
+                {yourRate < industryBM ? "낮습니다" : "높습니다"}
+              </span>
+            </p>
+            <CompareBar
+              label="의무고용률"
+              value={MANDATORY}
+              max={5}
+              color="#EF4444"
+              isMandatory
+            />
+            <CompareBar
+              label={`${form.ind} 평균`}
+              value={industryBM}
+              max={5}
+              color="#94A3B8"
+            />
+            <CompareBar
+              label="전체 평균"
+              value={NATIONAL_AVG}
+              max={5}
+              color="#CBD5E1"
+            />
+            <CompareBar
+              label="귀사 실고용률"
+              value={yourRate}
+              max={5}
+              color={yourRate >= industryBM ? "#10B981" : "#EF4444"}
+              highlight
+            />
+            <div
+              style={{
+                marginTop: 14,
+                padding: "10px 14px",
+                borderRadius: 10,
+                background: "#FFF7ED",
+                border: "1px solid #FED7AA",
+                fontSize: 12,
+                color: "#92400E",
+                lineHeight: 1.5,
+              }}
+            >
+              ⚠️ 2029년 의무고용률{" "}
+              <strong>3.5%로 인상 확정</strong> — 지금 대비하지 않으면 부족인원과
+              부담금이 더 늘어납니다
             </div>
-          </Card>
+          </div>
 
-          {/* AI 버튼 2개 */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+          {/* AI Action Buttons */}
+          <div
+            className="vd-fadeUp vd-st3"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 12,
+              marginBottom: 20,
+            }}
+          >
             <button
-              onClick={requestJobs}
-              disabled={jobsLoading}
-              style={{
-                padding: 11,
-                borderRadius: 10,
-                border: `1px solid ${C.ac}44`,
-                background: C.ad,
-                color: C.ac,
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: jobsLoading ? "wait" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
+              onClick={() => callAI("job")}
+              disabled={aiJobsLoading}
+              style={aiBtnStyle("#00C9A7")}
+              onMouseOver={(e) => {
+                if (!aiJobsLoading) {
+                  e.currentTarget.style.background = "#00C9A7";
+                  e.currentTarget.style.color = "#FFF";
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "#FFF";
+                e.currentTarget.style.color = "#00C9A7";
               }}
             >
-              {jobsLoading ? <Spinner /> : "🤖"} AI 맞춤 직무 추천
+              {aiJobsLoading ? "⏳ 분석 중..." : "🤖 AI 맞춤 직무 추천"}
             </button>
             <button
-              onClick={requestReport}
-              disabled={reportLoading}
-              style={{
-                padding: 11,
-                borderRadius: 10,
-                border: `1px solid ${C.bl}44`,
-                background: C.bd,
-                color: C.bl,
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: reportLoading ? "wait" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
+              onClick={() => callAI("report")}
+              disabled={aiReportLoading}
+              style={aiBtnStyle("#1D85EB")}
+              onMouseOver={(e) => {
+                if (!aiReportLoading) {
+                  e.currentTarget.style.background = "#1D85EB";
+                  e.currentTarget.style.color = "#FFF";
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "#FFF";
+                e.currentTarget.style.color = "#1D85EB";
               }}
             >
-              {reportLoading ? <Spinner color={C.bl} /> : "📋"} 경영진 리포트 생성
+              {aiReportLoading ? "⏳ 생성 중..." : "📋 경영진 리포트 생성"}
             </button>
           </div>
 
-          {/* AI 직무 추천 결과 */}
-          {jobs && (
-            <Card style={{ marginBottom: 12 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: C.ac, margin: "0 0 10px" }}>
-                🤖 AI 맞춤 직무 추천 — {form.industry}
-                {jobsFallback && (
-                  <span style={{ marginLeft: 8, fontSize: 10, color: C.tm, fontWeight: 500 }}>
-                    (샘플 데이터 — API 키 미설정 또는 오류)
+          {/* AI Jobs Result */}
+          {aiJobs && (
+            <div
+              className="vd-fadeUp"
+              style={{
+                background: "#FFFFFF",
+                borderRadius: 16,
+                padding: 24,
+                marginBottom: 20,
+                border: "1px solid #E2E8F0",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 16,
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 800,
+                    color: "#0F172A",
+                    margin: 0,
+                  }}
+                >
+                  🤖 {form.ind} 맞춤 직무 추천
+                </h3>
+                {aiJobsFallback && (
+                  <span style={{ fontSize: 10, color: "#94A3B8" }}>
+                    (샘플 — API 미설정)
                   </span>
                 )}
-              </h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                {(jobs.jobs || []).map((j, i) => (
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {(aiJobs.jobs || []).map((j, i) => (
                   <div
                     key={i}
                     style={{
-                      padding: "9px 11px",
-                      borderRadius: 8,
-                      background: C.sa,
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
+                      padding: "14px 16px",
+                      borderRadius: 12,
+                      background: "#F8FAFC",
+                      border: "1px solid #F1F5F9",
                     }}
                   >
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: C.t }}>{j.title}</div>
-                      <div style={{ fontSize: 11, color: C.td, marginTop: 1 }}>{j.desc}</div>
-                      <div style={{ display: "flex", gap: 5, marginTop: 3 }}>
-                        <Badge color={C.pp}>{j.type}</Badge>
-                        <Badge color={C.tm} background={C.sh}>
-                          난이도: {j.difficulty}
-                        </Badge>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 700,
+                          color: "#0F172A",
+                        }}
+                      >
+                        {j.title}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: "#64748B",
+                          marginTop: 2,
+                        }}
+                      >
+                        {j.desc}
+                      </div>
+                      <div style={{ display: "flex", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            padding: "2px 8px",
+                            borderRadius: 6,
+                            background: "#EDE9FE",
+                            color: "#7C3AED",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {j.type}
+                        </span>
+                        {j.difficulty && (
+                          <span
+                            style={{
+                              fontSize: 11,
+                              padding: "2px 8px",
+                              borderRadius: 6,
+                              background: "#F1F5F9",
+                              color: "#64748B",
+                              fontWeight: 600,
+                            }}
+                          >
+                            난이도: {j.difficulty}
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <Badge color={String(j.fit || "").includes("높") ? C.ac : C.wn}>{j.fit}</Badge>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        padding: "4px 10px",
+                        borderRadius: 8,
+                        fontWeight: 700,
+                        background: String(j.fit || "").includes("높")
+                          ? "#ECFDF5"
+                          : "#FFF7ED",
+                        color: String(j.fit || "").includes("높")
+                          ? "#059669"
+                          : "#D97706",
+                        flexShrink: 0,
+                        marginLeft: 8,
+                      }}
+                    >
+                      {j.fit}
+                    </span>
                   </div>
                 ))}
               </div>
-              {jobs.tip && (
+              {aiJobs.tip && (
                 <div
                   style={{
-                    marginTop: 8,
-                    padding: "6px 9px",
-                    borderRadius: 6,
-                    background: `${C.ac}08`,
-                    border: `1px solid ${C.ac}15`,
-                    fontSize: 11,
-                    color: C.ac,
+                    marginTop: 12,
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    background: "#F0FDF4",
+                    border: "1px solid #BBF7D0",
+                    fontSize: 12,
+                    color: "#166534",
                   }}
                 >
-                  💡 {jobs.tip}
+                  💡 {aiJobs.tip}
                 </div>
               )}
-            </Card>
+            </div>
           )}
 
-          {/* 경영진 리포트 */}
-          {report && (
-            <Card style={{ marginBottom: 12, border: `1px solid ${C.bl}22` }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: C.bl, margin: "0 0 10px" }}>
-                📋 AI 경영진 리포트
-                {reportFallback && (
-                  <span style={{ marginLeft: 8, fontSize: 10, color: C.tm, fontWeight: 500 }}>
-                    (샘플 데이터 — API 키 미설정 또는 오류)
-                  </span>
-                )}
-              </h3>
+          {/* AI Report Result */}
+          {aiReport && (
+            <div
+              className="vd-fadeUp"
+              style={{
+                background: "#FFFFFF",
+                borderRadius: 16,
+                padding: 24,
+                marginBottom: 20,
+                border: "2px solid rgba(29,133,235,0.15)",
+                boxShadow: "0 4px 20px rgba(29,133,235,0.08)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginBottom: 16,
+                }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    background:
+                      "linear-gradient(135deg, #1D85EB, #00C9A7)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 20,
+                  }}
+                >
+                  📋
+                </div>
+                <div>
+                  <h3
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 800,
+                      color: "#0F172A",
+                      margin: 0,
+                    }}
+                  >
+                    AI 경영진 보고 리포트
+                    {aiReportFallback && (
+                      <span
+                        style={{
+                          fontSize: 10,
+                          color: "#94A3B8",
+                          marginLeft: 6,
+                          fontWeight: 500,
+                        }}
+                      >
+                        (샘플)
+                      </span>
+                    )}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: 11,
+                      color: "#64748B",
+                      margin: 0,
+                    }}
+                  >
+                    이 리포트를 경영진에게 공유하세요
+                  </p>
+                </div>
+              </div>
               {[
-                { label: "핵심 요약", text: report.summary, color: C.t },
-                { label: "미이행 리스크", text: report.risk, color: C.rd },
-                { label: "도입 권고", text: report.recommendation, color: C.ac },
-                { label: "추천 일정", text: report.timeline, color: C.wn },
+                {
+                  label: "핵심 요약",
+                  text: aiReport.summary,
+                  color: "#0F172A",
+                  bg: "#F8FAFC",
+                },
+                {
+                  label: "⚠️ 미이행 리스크",
+                  text: aiReport.risk,
+                  color: "#991B1B",
+                  bg: "#FEF2F2",
+                },
+                {
+                  label: "✅ 도입 권고",
+                  text: aiReport.recommendation,
+                  color: "#166534",
+                  bg: "#F0FDF4",
+                },
+                {
+                  label: "📅 추천 일정",
+                  text: aiReport.timeline,
+                  color: "#92400E",
+                  bg: "#FFF7ED",
+                },
               ]
                 .filter((s) => s.text)
                 .map((s, i) => (
-                  <div key={i} style={{ marginBottom: 8 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: s.color, marginBottom: 2 }}>
+                  <div
+                    key={i}
+                    style={{
+                      marginBottom: 10,
+                      padding: "12px 14px",
+                      borderRadius: 10,
+                      background: s.bg,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: s.color,
+                        marginBottom: 4,
+                      }}
+                    >
                       {s.label}
                     </div>
                     <div
                       style={{
-                        fontSize: 12,
-                        color: C.td,
-                        lineHeight: 1.6,
-                        padding: "7px 9px",
-                        borderRadius: 6,
-                        background: C.sa,
+                        fontSize: 13,
+                        color: "#334155",
+                        lineHeight: 1.65,
                       }}
                     >
                       {s.text}
                     </div>
                   </div>
                 ))}
-              <div style={{ textAlign: "center", marginTop: 4 }}>
-                <button
-                  style={{
-                    padding: "9px 26px",
-                    borderRadius: 8,
-                    border: "none",
-                    background: C.bl,
-                    color: "#fff",
-                    fontWeight: 700,
-                    fontSize: 12,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => alert("PDF 다운로드 기능은 리드 수집 연동 시 활성화됩니다.")}
-                >
-                  📄 PDF 다운로드 (리드 수집)
-                </button>
-              </div>
-            </Card>
+            </div>
           )}
 
-          {/* 2차 CTA — 브이드림 무료 상담 */}
-          <VDreamCTA />
+          {/* FAQ Section (with AI Q&A) */}
+          <div className="vd-fadeUp vd-st4" style={{ marginBottom: 20 }}>
+            <FAQSection
+              context={{
+                industry: form.ind,
+                employees: result.employees,
+                shortage: result.shortage,
+                annualPenalty: result.annualPenalty,
+              }}
+            />
+          </div>
 
-          {/* FAQ + AI Q&A */}
-          <FAQSection
-            context={{
-              industry: form.industry,
-              employees: result.employees,
-              shortage: result.shortage,
-              annualPenalty: result.annualPenalty,
+          {/* Premium Dark CTA */}
+          <div
+            className="vd-fadeUp"
+            style={{
+              background:
+                "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+              borderRadius: 20,
+              padding: "32px 28px",
+              textAlign: "center",
+              position: "relative",
+              overflow: "hidden",
+              marginBottom: 40,
             }}
-          />
-        </>
+          >
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                top: -50,
+                right: -50,
+                width: 200,
+                height: 200,
+                borderRadius: "50%",
+                background:
+                  "radial-gradient(circle, rgba(0,201,167,0.18), transparent 70%)",
+              }}
+            />
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                bottom: -60,
+                left: -60,
+                width: 200,
+                height: 200,
+                borderRadius: "50%",
+                background:
+                  "radial-gradient(circle, rgba(29,133,235,0.12), transparent 70%)",
+              }}
+            />
+            <h3
+              style={{
+                fontSize: 22,
+                fontWeight: 900,
+                color: "#FFFFFF",
+                marginBottom: 12,
+                fontFamily: "'Outfit', sans-serif",
+                margin: "0 0 12px",
+                position: "relative",
+              }}
+            >
+              브이드림과 함께 시작하세요
+            </h3>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 8,
+                marginBottom: 16,
+                flexWrap: "wrap",
+                position: "relative",
+              }}
+            >
+              {["🛡️ 분쟁률 0%", "⚡ 2~4주 도입", "🏠 편의시설 불필요"].map(
+                (t) => (
+                  <span
+                    key={t}
+                    style={{
+                      fontSize: 12,
+                      color: "#00C9A7",
+                      padding: "5px 14px",
+                      borderRadius: 20,
+                      background: "rgba(0,201,167,0.12)",
+                      fontWeight: 600,
+                      border: "1px solid rgba(0,201,167,0.25)",
+                    }}
+                  >
+                    {t}
+                  </span>
+                )
+              )}
+            </div>
+            <p
+              style={{
+                fontSize: 13,
+                color: "#94A3B8",
+                marginBottom: 20,
+                position: "relative",
+              }}
+            >
+              <strong style={{ color: "#00C9A7" }}>450+ 기업</strong>이 이미
+              브이드림과 함께하고 있습니다
+            </p>
+            <a
+              href="https://www.vdream.co.kr/inquiry"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-block",
+                padding: "14px 36px",
+                borderRadius: 12,
+                textDecoration: "none",
+                background:
+                  "linear-gradient(135deg, #00C9A7, #1D85EB)",
+                color: "#FFF",
+                fontSize: 15,
+                fontWeight: 800,
+                boxShadow: "0 8px 24px rgba(0,201,167,0.3)",
+                position: "relative",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,201,167,0.42)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,201,167,0.3)";
+              }}
+            >
+              무료 상담 신청하기 →
+            </a>
+            <p
+              style={{
+                fontSize: 12,
+                color: "#64748B",
+                marginTop: 14,
+                position: "relative",
+              }}
+            >
+              또는 대표번호{" "}
+              <a
+                href="tel:1644-8619"
+                style={{
+                  color: "#FFFFFF",
+                  fontWeight: 700,
+                  textDecoration: "none",
+                  fontFamily: "'Outfit', monospace",
+                }}
+              >
+                1644-8619
+              </a>
+              로 전화 상담
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );
 }
 
 /* ============================================================
- * 서브 컴포넌트
+ * 보조 컴포넌트
  * ============================================================ */
 
-function BenchmarkCard({ yourRate, industry }) {
-  const MANDATORY_RATE = 3.1;
-  const avg = INDUSTRY_AVG[industry] ?? OVERALL_AVG;
-  const cmp = compareToIndustry(yourRate, industry);
-  const yourColor = cmp.belowAverage ? C.rd : C.ac;
-
-  // 4-bar 비교: 의무고용률 / 전체 평균 / 업종 평균 / 귀사
-  const data = [
-    { name: "의무고용률", value: MANDATORY_RATE, color: C.am, isTarget: true },
-    { name: "전체 평균", value: OVERALL_AVG, color: C.tm },
-    { name: `${industry} 평균`, value: avg, color: C.bl },
-    { name: "귀사", value: Number(yourRate.toFixed(2)), color: yourColor },
-  ];
-
-  // 업종 평균 대비 차이 (스펙: "{차이}%p 낮습니다")
-  const diffPp = Number((yourRate - avg).toFixed(2));
-  const diffText =
-    diffPp < -0.05
-      ? `귀사는 ${industry} 평균 대비 ${Math.abs(diffPp).toFixed(2)}%p 낮습니다`
-      : diffPp > 0.05
-      ? `귀사는 ${industry} 평균 대비 ${diffPp.toFixed(2)}%p 높습니다`
-      : `귀사는 ${industry} 평균과 거의 같은 수준입니다`;
-
-  const maxVal = Math.max(...data.map((d) => d.value), MANDATORY_RATE) * 1.25;
-
+function NumField({ icon, label, placeholder, value, onChange }) {
   return (
-    <Card style={{ marginBottom: 12 }}>
-      <h3
+    <div>
+      <label
         style={{
           fontSize: 13,
-          fontWeight: 700,
-          color: C.ac,
-          margin: "0 0 4px",
+          fontWeight: 600,
+          color: "#334155",
           display: "flex",
           alignItems: "center",
           gap: 6,
+          marginBottom: 8,
         }}
       >
-        📊 동종업계 비교 벤치마크
-      </h3>
-      <div style={{ fontSize: 11, color: C.td, marginBottom: 10 }}>
-        의무고용률 3.1% · 전체 평균 · {industry} 평균 · 귀사 실고용률 4-way 비교
-      </div>
-
-      <div style={{ width: "100%", height: 190 }}>
-        <ResponsiveContainer>
-          <BarChart data={data} margin={{ top: 20, right: 10, left: -10, bottom: 0 }}>
-            <XAxis
-              dataKey="name"
-              tick={{ fill: C.td, fontSize: 11 }}
-              axisLine={{ stroke: C.bl2 }}
-              tickLine={false}
-            />
-            <YAxis
-              tick={{ fill: C.td, fontSize: 11 }}
-              axisLine={{ stroke: C.bl2 }}
-              tickLine={false}
-              domain={[0, maxVal]}
-              tickFormatter={(v) => `${v}%`}
-            />
-            <Tooltip
-              cursor={{ fill: "#F8FAFC" }}
-              contentStyle={{
-                background: C.sa,
-                border: `1px solid ${C.bl2}`,
-                borderRadius: 8,
-                fontSize: 12,
-                color: C.t,
-              }}
-              formatter={(v) => [`${v}%`, "고용률"]}
-            />
-            <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-              {data.map((d, i) => (
-                <Cell key={i} fill={d.color} />
-              ))}
-              <LabelList
-                dataKey="value"
-                position="top"
-                fill={C.t}
-                fontSize={12}
-                fontWeight={700}
-                formatter={(v) => `${v}%`}
-              />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div
-        style={{
-          marginTop: 8,
-          padding: "8px 11px",
-          borderRadius: 8,
-          background: cmp.belowAverage ? `${C.rd}0f` : `${C.ac}0f`,
-          border: `1px solid ${cmp.belowAverage ? C.rd : C.ac}33`,
-          fontSize: 12,
-          color: cmp.belowAverage ? C.rd : C.ac,
-          fontWeight: 600,
-          lineHeight: 1.5,
-        }}
-      >
-        {cmp.belowAverage ? "⚠️ " : "✅ "}
-        {diffText}
-        {cmp.belowAverage && (
-          <span style={{ color: C.td, fontWeight: 400, marginLeft: 4 }}>
-            — 브이드림 도입으로 업종 평균 이상 달성 가능
-          </span>
-        )}
-      </div>
-    </Card>
-  );
-}
-
-function VDreamCTA() {
-  return (
-    <Card
-      style={{
-        marginTop: 6,
-        marginBottom: 8,
-        padding: 22,
-        background: `linear-gradient(135deg, ${C.ac}16 0%, ${C.bl}16 100%)`,
-        border: `1px solid ${C.ac}44`,
-        boxShadow: `0 0 32px ${C.ac}22`,
-      }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <div
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: C.ac,
-            letterSpacing: 1.5,
-            textTransform: "uppercase",
-            marginBottom: 6,
-          }}
-        >
-          VDream Free Consultation
-        </div>
-        <h3
-          style={{
-            margin: 0,
-            fontSize: 18,
-            fontWeight: 900,
-            color: C.t,
-            lineHeight: 1.4,
-          }}
-        >
-          브이드림과 함께
-          <br />
-          <span
-            style={{
-              background: `linear-gradient(135deg, ${C.ac}, ${C.bl})`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            고용부담금 제로
-          </span>
-          를 만드세요
-        </h3>
-
-        {/* 소셜 프루프 */}
-        <div
-          style={{
-            marginTop: 10,
-            fontSize: 12,
-            color: C.td,
-            fontWeight: 500,
-          }}
-        >
-          <strong style={{ color: C.ac }}>450+ 기업</strong>이 이미 브이드림과 함께하고 있습니다
-        </div>
-
-        {/* USP 3개 */}
-        <div
-          style={{
-            marginTop: 12,
-            display: "flex",
-            gap: 6,
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {[
-            { icon: "⚖️", text: "법적/노무 분쟁률 0%" },
-            { icon: "⚡", text: "2~4주 내 도입" },
-            { icon: "🏠", text: "편의시설 투자 불필요" },
-          ].map((u, i) => (
-            <div
-              key={i}
-              style={{
-                padding: "6px 10px",
-                borderRadius: 999,
-                background: "#F1F5F9",
-                border: `1px solid ${C.ac}22`,
-                fontSize: 11,
-                fontWeight: 600,
-                color: C.t,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
-              <span>{u.icon}</span>
-              {u.text}
-            </div>
-          ))}
-        </div>
-
-        {/* 주 CTA 버튼 */}
-        <a
-          href="https://www.vdream.co.kr/inquiry"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: "inline-block",
-            marginTop: 16,
-            padding: "13px 34px",
-            borderRadius: 12,
-            background: `linear-gradient(135deg, ${C.ac}, ${C.bl})`,
-            color: "#000",
-            fontSize: 14,
-            fontWeight: 900,
-            textDecoration: "none",
-            boxShadow: `0 6px 20px ${C.ac}44`,
-            transition: "transform 0.15s ease, box-shadow 0.15s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.boxShadow = `0 8px 26px ${C.ac}66`;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = `0 6px 20px ${C.ac}44`;
-          }}
-        >
-          🚀 브이드림 무료 상담 신청하기
-        </a>
-
-        {/* 전화 상담 */}
-        <div
-          style={{
-            marginTop: 10,
-            fontSize: 12,
-            color: C.td,
-          }}
-        >
-          또는 대표번호{" "}
-          <a
-            href="tel:1644-8619"
-            style={{
-              color: C.ac,
-              fontWeight: 700,
-              fontFamily: "'JetBrains Mono', monospace",
-              textDecoration: "none",
-            }}
-          >
-            1644-8619
-          </a>
-          로 전화 상담
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-/* ============================================================
- * 입력 필드 서브 컴포넌트
- * ============================================================ */
-
-const labelStyle = {
-  fontSize: 11,
-  color: "#334155",
-  fontWeight: 600,
-  display: "block",
-  marginBottom: 4,
-};
-
-const miniLabel = { fontSize: 10, color: "#334155", fontWeight: 600, marginBottom: 2 };
-const bigNum = { fontSize: 19, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace" };
-const miniDim = { fontSize: 10, color: "#64748B", marginTop: 2 };
-
-function NumField({ label, unit, placeholder, value, onChange }) {
-  return (
-    <div>
-      <label style={labelStyle}>{label}</label>
-      <div style={{ position: "relative" }}>
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          style={{
-            width: "100%",
-            padding: "9px 34px 9px 12px",
-            borderRadius: 8,
-            border: "1px solid #CBD5E1",
-            background: "#F1F5F9",
-            color: "#0F172A",
-            fontSize: 14,
-            fontFamily: "'JetBrains Mono', monospace",
-            outline: "none",
-            boxSizing: "border-box",
-          }}
-        />
-        <span
-          style={{
-            position: "absolute",
-            right: 10,
-            top: "50%",
-            transform: "translateY(-50%)",
-            fontSize: 11,
-            color: "#64748B",
-          }}
-        >
-          {unit}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function Metric({ label, value, sub, color = "#0F172A" }) {
-  return (
-    <div>
-      <div style={{ fontSize: 10, color: "#334155", fontWeight: 600, marginBottom: 3 }}>
+        <span style={{ fontSize: 16 }}>{icon}</span>
         {label}
-      </div>
-      <div style={{ fontSize: 15, fontWeight: 800, color, fontFamily: "'JetBrains Mono', monospace" }}>
-        {value}
-        {sub && <span style={{ fontSize: 10, color: "#64748B", marginLeft: 4 }}>{sub}</span>}
-      </div>
+      </label>
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{
+          width: "100%",
+          padding: "14px 16px",
+          borderRadius: 12,
+          fontSize: 16,
+          border: "2px solid #E2E8F0",
+          background: "#F8FAFC",
+          color: "#0F172A",
+          fontFamily: "'Outfit', sans-serif",
+          fontWeight: 600,
+          outline: "none",
+          transition: "border-color 0.2s, box-shadow 0.2s",
+          boxSizing: "border-box",
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = "#00C9A7";
+          e.target.style.boxShadow = "0 0 0 4px rgba(0,201,167,0.1)";
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = "#E2E8F0";
+          e.target.style.boxShadow = "none";
+        }}
+      />
     </div>
   );
+}
+
+function aiBtnStyle(color) {
+  return {
+    padding: 16,
+    borderRadius: 14,
+    cursor: "pointer",
+    textAlign: "center",
+    background: "#FFFFFF",
+    border: `2px solid ${color}`,
+    color,
+    fontSize: 14,
+    fontWeight: 700,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    transition: "all 0.2s",
+  };
 }

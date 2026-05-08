@@ -72,31 +72,27 @@ export default function FAQSection({ context }) {
         궁금한 점을 클릭하거나 직접 질문해보세요 — Claude가 답변드립니다.
       </p>
 
-      {/* FAQ 아코디언 */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      {/* FAQ 아코디언 — 클린한 보더 디바이더 + + 회전 아이콘 */}
+      <div>
         {FAQ_DATA.map((item, i) => {
           const open = openIdx === i;
           return (
             <div
               key={i}
               style={{
-                borderRadius: 8,
-                border: `1px solid ${open ? C.ac + "44" : C.bl2}`,
-                background: open ? `${C.ac}08` : C.sa,
-                overflow: "hidden",
-                transition: "border-color 0.15s, background 0.15s",
+                borderBottom: i < FAQ_DATA.length - 1 ? `1px solid ${C.sa}` : "none",
               }}
             >
               <button
                 onClick={() => toggle(i)}
                 style={{
                   width: "100%",
-                  padding: "10px 12px",
+                  padding: "14px 0",
                   background: "transparent",
                   border: "none",
-                  color: open ? C.ac : C.t,
-                  fontSize: 12,
-                  fontWeight: 700,
+                  color: C.t,
+                  fontSize: 14,
+                  fontWeight: 600,
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
@@ -105,32 +101,32 @@ export default function FAQSection({ context }) {
                   textAlign: "left",
                 }}
               >
-                <span style={{ flex: 1, lineHeight: 1.4 }}>
-                  <span style={{ color: C.tm, marginRight: 6, fontFamily: "'JetBrains Mono', monospace" }}>
-                    Q{i + 1}.
-                  </span>
-                  {item.q}
-                </span>
+                <span style={{ flex: 1, lineHeight: 1.5 }}>{item.q}</span>
                 <span
                   style={{
                     color: open ? C.ac : C.tm,
-                    fontSize: 14,
-                    transform: open ? "rotate(180deg)" : "rotate(0)",
-                    transition: "transform 0.2s",
+                    fontSize: 22,
+                    fontWeight: 300,
+                    transform: open ? "rotate(45deg)" : "rotate(0)",
+                    transition: "transform 0.2s, color 0.2s",
+                    lineHeight: 1,
+                    width: 22,
+                    height: 22,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
-                  ▾
+                  +
                 </span>
               </button>
               {open && (
                 <div
                   style={{
-                    padding: "0 12px 12px 12px",
-                    fontSize: 12,
+                    padding: "0 0 14px",
+                    fontSize: 13,
                     color: C.td,
                     lineHeight: 1.7,
-                    borderTop: `1px solid ${C.bl2}`,
-                    paddingTop: 10,
                   }}
                 >
                   {item.a}
