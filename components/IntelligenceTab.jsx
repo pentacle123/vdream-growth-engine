@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Badge from "./ui/Badge";
-import { TARGET_COMPANIES } from "@/data/targetCompanies";
 import CompanyDB from "./intelligence/CompanyDB";
 import ScoringView from "./intelligence/ScoringView";
 import ProposalGenerator from "./intelligence/ProposalGenerator";
 import OutreachGenerator from "./intelligence/OutreachGenerator";
+import { useData, DATA_KEYS } from "@/contexts/DataContext";
 
 const C = {
   sf: "#F8FAFC",
@@ -29,9 +29,28 @@ const SUBVIEWS = [
 ];
 
 export default function IntelligenceTab() {
+  const { data } = useData();
+  const baseCompanies = data[DATA_KEYS.targetCompanies];
+
+  // 외부 데이터 + 로컬 status 결합. baseCompanies가 변경되면(업로드 등) 재동기화.
   const [companies, setCompanies] = useState(() =>
-    TARGET_COMPANIES.map((c) => ({ ...c, status: "untouched" }))
+    baseCompanies.map((c) => ({ ...c, status: c.status || "untouched" }))
   );
+
+  useEffect(() => {
+    setCompanies((prev) => {
+      // 기존 status 유지 (id 기준 매칭)
+      const statusMap = {};
+      prev.forEach((c) => {
+        if (c.status) statusMap[c.id] = c.status;
+      });
+      return baseCompanies.map((c) => ({
+        ...c,
+        status: statusMap[c.id] || c.status || "untouched",
+      }));
+    });
+  }, [baseCompanies]);
+
   const [sub, setSub] = useState("db");
   const [selectedId, setSelectedId] = useState(null);
   const [proposals, setProposals] = useState({}); // { [companyId]: proposalData }

@@ -9,6 +9,7 @@ import ShortformTab from "@/components/ShortformTab";
 import IntelligenceTab from "@/components/IntelligenceTab";
 import DashboardView from "@/components/DashboardView";
 import AssetLibraryView from "@/components/AssetLibraryView";
+import DataUpload from "@/components/DataUpload";
 
 const NAV_ITEMS = [
   { key: "performance",   label: "DA 퍼포먼스" },
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { key: "intelligence",  label: "타겟 인텔리전스" },
   { key: "dashboard",     label: "대시보드" },
   { key: "library",       label: "자산 라이브러리" },
+  { key: "upload",        label: "📤 데이터 업로드" },
 ];
 
 const C = {
@@ -91,6 +93,7 @@ export default function Home() {
             {view === "intelligence" && <IntelligenceTab />}
             {view === "dashboard" && <DashboardView />}
             {view === "library" && <AssetLibraryView onNavigate={navigate} />}
+            {view === "upload" && <DataUpload />}
           </div>
         )}
       </main>

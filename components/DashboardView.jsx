@@ -19,12 +19,8 @@ import Card from "./ui/Card";
 import Badge from "./ui/Badge";
 import ProgressBar from "./ui/ProgressBar";
 import Spinner from "./ui/Spinner";
-import {
-  PIPELINE_STAGES,
-  CHANNEL_PERFORMANCE,
-  MONTHLY_TREND,
-  TREND_METRICS,
-} from "@/data/dashboardData";
+import { PIPELINE_STAGES, TREND_METRICS } from "@/data/dashboardData";
+import { useData, DATA_KEYS } from "@/contexts/DataContext";
 
 const C = {
   bg: "#FFFFFF",
@@ -239,9 +235,11 @@ function PipelineFunnel() {
  * ============================================================ */
 
 function ChannelPerformance() {
+  const { data } = useData();
+  const CHANNEL_PERFORMANCE = data[DATA_KEYS.channelPerformance];
   const sortedByEfficiency = useMemo(
     () => [...CHANNEL_PERFORMANCE].sort((a, b) => a.cpa - b.cpa),
-    []
+    [CHANNEL_PERFORMANCE]
   );
   const bestChannel = sortedByEfficiency[0];
   const worstChannel = sortedByEfficiency[sortedByEfficiency.length - 1];
@@ -402,6 +400,8 @@ function ChannelPerformance() {
  * ============================================================ */
 
 function MonthlyTrend() {
+  const { data } = useData();
+  const MONTHLY_TREND = data[DATA_KEYS.monthlyTrend];
   const [active, setActive] = useState(["leads", "consultations", "contracts"]);
 
   const toggle = (key) => {
@@ -509,6 +509,8 @@ function MonthlyTrend() {
  * ============================================================ */
 
 function AIMonthlyReport() {
+  const { data } = useData();
+  const MONTHLY_TREND = data[DATA_KEYS.monthlyTrend];
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -689,6 +691,8 @@ function AIMonthlyReport() {
  * ============================================================ */
 
 function RevenueShareCalculator() {
+  const { data } = useData();
+  const MONTHLY_TREND = data[DATA_KEYS.monthlyTrend];
   const [monthlyRev, setMonthlyRev] = useState(2_000_000);
   const [shareRate, setShareRate] = useState(20);
 

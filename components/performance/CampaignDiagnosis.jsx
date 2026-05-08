@@ -17,13 +17,13 @@ import Card from "../ui/Card";
 import Badge from "../ui/Badge";
 import Spinner from "../ui/Spinner";
 import {
-  NAVER_AD_DATA,
   TAG_COLOR,
   aggregateGroups,
   aggregateTotals,
   aggregateByTag,
   flattenKeywords,
 } from "@/data/naverAdData";
+import { useData, DATA_KEYS } from "@/contexts/DataContext";
 
 const C = {
   sf: "#F8FAFC",
@@ -41,10 +41,12 @@ const C = {
 };
 
 export default function CampaignDiagnosis() {
-  const totals = useMemo(aggregateTotals, []);
-  const groups = useMemo(aggregateGroups, []);
-  const byTag = useMemo(aggregateByTag, []);
-  const rows = useMemo(flattenKeywords, []);
+  const { data } = useData();
+  const naverAd = data[DATA_KEYS.naverAd];
+  const totals = useMemo(() => aggregateTotals(naverAd), [naverAd]);
+  const groups = useMemo(() => aggregateGroups(naverAd), [naverAd]);
+  const byTag = useMemo(() => aggregateByTag(naverAd), [naverAd]);
+  const rows = useMemo(() => flattenKeywords(naverAd), [naverAd]);
 
   const [diagnosis, setDiagnosis] = useState(null);
   const [loading, setLoading] = useState(false);

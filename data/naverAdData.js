@@ -69,24 +69,29 @@ export const TAG_COLOR = {
   "기타": "#64748B",
 };
 
-export function aggregateGroups() {
-  return NAVER_AD_DATA.map((g) => {
-    const imp = g.keywords.reduce((a, k) => a + k.imp, 0);
-    const click = g.keywords.reduce((a, k) => a + k.click, 0);
-    const cost = g.keywords.reduce((a, k) => a + k.cost, 0);
-    const conv = g.keywords.reduce((a, k) => a + k.conv, 0);
+// ============================================================
+// 집계 헬퍼 — data 인자 미지정 시 NAVER_AD_DATA 디폴트 사용
+// DataContext에서 동적 데이터를 넘기면 그걸 기반으로 계산
+// ============================================================
+
+export function aggregateGroups(source = NAVER_AD_DATA) {
+  return source.map((g) => {
+    const imp = g.keywords.reduce((a, k) => a + (k.imp || 0), 0);
+    const click = g.keywords.reduce((a, k) => a + (k.click || 0), 0);
+    const cost = g.keywords.reduce((a, k) => a + (k.cost || 0), 0);
+    const conv = g.keywords.reduce((a, k) => a + (k.conv || 0), 0);
     return { name: g.group, tag: g.tag, imp, click, cost, conv };
   });
 }
 
-export function aggregateTotals() {
+export function aggregateTotals(source = NAVER_AD_DATA) {
   let imp = 0, click = 0, cost = 0, conv = 0;
-  NAVER_AD_DATA.forEach((g) =>
+  source.forEach((g) =>
     g.keywords.forEach((k) => {
-      imp += k.imp;
-      click += k.click;
-      cost += k.cost;
-      conv += k.conv;
+      imp += k.imp || 0;
+      click += k.click || 0;
+      cost += k.cost || 0;
+      conv += k.conv || 0;
     })
   );
   const ctr = imp > 0 ? (click / imp) * 100 : 0;
@@ -94,9 +99,9 @@ export function aggregateTotals() {
   return { imp, click, cost, conv, ctr, avgCpc };
 }
 
-export function aggregateByTag() {
+export function aggregateByTag(source = NAVER_AD_DATA) {
   const counts = {};
-  NAVER_AD_DATA.forEach((g) =>
+  source.forEach((g) =>
     g.keywords.forEach((k) => {
       counts[k.tag] = (counts[k.tag] || 0) + 1;
     })
@@ -108,12 +113,40 @@ export function aggregateByTag() {
   }));
 }
 
-export function flattenKeywords() {
+export function flattenKeywords(source = NAVER_AD_DATA) {
   const rows = [];
-  NAVER_AD_DATA.forEach((g) =>
+  source.forEach((g) =>
     g.keywords.forEach((k) =>
       rows.push({ ...k, group: g.group })
     )
   );
   return rows;
+}
+
+/**
+ * 키워드 자동 태깅 (B2B/B2C/혼합/브랜드/기타)
+ * 업로드 시 키워드명 기준으로 자동 분류
+ */
+export function autoTagKeyword(keyword) {
+  if (!keyword) return "기타";
+  const k = keyword.toLowerCase();
+  if (
+    k.includes("부담금") ||
+    k.includes("의무고용") ||
+    k.includes("esg") ||
+    k.includes("기업") ||
+    k.includes("hr")
+  )
+    return "B2B";
+  if (
+    k.includes("일자리") ||
+    k.includes("취업") ||
+    k.includes("구인") ||
+    k.includes("구직")
+  )
+    return "B2C";
+  if (k.includes("브이드림") || k.includes("vdream") || k.includes("flipped"))
+    return "브랜드";
+  if (k.includes("채용") || k.includes("고용")) return "혼합";
+  return "기타";
 }
