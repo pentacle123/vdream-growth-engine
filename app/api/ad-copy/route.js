@@ -3,6 +3,8 @@
 // Request:  { keyword, target, usps[], tone }
 // Response: { naver:{titles[3], descs[3]}, meta:{headline, body, cta}, linkedin:{headline, intro}, youtube:{bumper6s}, landing:{headline, sub, cta} }
 
+import { COPY_AND_DESIGN_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const TARGET_LABEL = {
@@ -127,6 +129,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 2000,
+        system: COPY_AND_DESIGN_SYSTEM,
         messages: [{ role: "user", content: buildPrompt(body) }],
       }),
     });

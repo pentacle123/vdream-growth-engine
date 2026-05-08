@@ -3,6 +3,8 @@
 // Request:  { opportunity, content? }
 // Response: { hook, problem, solution, proof, cta, caption, hashtags[], thumbnail }
 
+import { COPY_EXPERT_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const FALLBACK = (opp, content) => {
@@ -124,6 +126,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1400,
+        system: COPY_EXPERT_SYSTEM,
         messages: [{ role: "user", content: buildPrompt(opportunity, content) }],
       }),
     });

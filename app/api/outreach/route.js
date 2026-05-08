@@ -5,6 +5,8 @@
 
 import { formatWon } from "@/lib/calculate";
 
+import { COPY_EXPERT_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const CHANNEL_LABEL = {

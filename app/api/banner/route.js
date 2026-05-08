@@ -3,6 +3,8 @@
 // Request:  { width, height, headline, subCopy, cta, theme }
 // Response: { dark: "<html>", light: "<html>" }
 
+import { COPY_AND_DESIGN_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const fallbackBanner = (req, theme) => {
@@ -57,6 +59,7 @@ async function generateOne(apiKey, body, theme) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 2000,
+        system: COPY_AND_DESIGN_SYSTEM,
         messages: [{ role: "user", content: buildPrompt({ ...body, theme }) }],
       }),
     });

@@ -3,6 +3,8 @@
 // Request:  { current, previous }
 // Response: { summary, highlights[3], issues[2~3], recommendations[3], budget }
 
+import { COPY_EXPERT_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const FALLBACK = (cur, prev) => {
@@ -98,6 +100,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1500,
+        system: COPY_EXPERT_SYSTEM,
         messages: [{ role: "user", content: buildPrompt(current, previous) }],
       }),
     });

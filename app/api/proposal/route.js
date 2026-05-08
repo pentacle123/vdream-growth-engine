@@ -5,6 +5,8 @@
 
 import { formatWon } from "@/lib/calculate";
 
+import { COPY_EXPERT_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const FALLBACK = (c, roi) => ({
@@ -105,6 +107,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1600,
+        system: COPY_EXPERT_SYSTEM,
         messages: [{ role: "user", content: buildPrompt(company, roi) }],
       }),
     });

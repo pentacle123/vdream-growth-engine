@@ -3,6 +3,8 @@
 // Request:  { industry, employees, shortage, hireNeeded }
 // Response: { jobs: [{title, type, difficulty, desc, fit}], tip }
 
+import { COPY_EXPERT_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const FALLBACK = {
@@ -68,6 +70,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
+        system: COPY_EXPERT_SYSTEM,
         messages: [{ role: "user", content: buildPrompt({ industry, employees, shortage, hireNeeded }) }],
       }),
     });

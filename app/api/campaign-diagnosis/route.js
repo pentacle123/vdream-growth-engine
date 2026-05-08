@@ -3,6 +3,8 @@
 // Request:  { totals, groups, byTag, sampleKeywords }
 // Response: { problems:[{title,desc}], solutions:[{title,desc}], quickWins:[{title,desc}] }
 
+import { COPY_EXPERT_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const FALLBACK = {
@@ -121,6 +123,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 2000,
+        system: COPY_EXPERT_SYSTEM,
         messages: [{ role: "user", content: buildPrompt(body) }],
       }),
     });

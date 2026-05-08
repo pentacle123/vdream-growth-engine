@@ -3,6 +3,8 @@
 // Request:  { keyword, target, usps[], tone }
 // Response: { html: "<full html>" }
 
+import { COPY_AND_DESIGN_SYSTEM } from "@/lib/expertSkills";
+
 export const runtime = "nodejs";
 
 const FALLBACK_HTML = (req) => `<!doctype html>
@@ -128,6 +130,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4000,
+        system: COPY_AND_DESIGN_SYSTEM,
         messages: [{ role: "user", content: buildPrompt(body) }],
       }),
     });
