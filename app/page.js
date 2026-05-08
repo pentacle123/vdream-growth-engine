@@ -90,7 +90,7 @@ export default function Home() {
             )}
             {view === "intelligence" && <IntelligenceTab />}
             {view === "dashboard" && <DashboardView />}
-            {view === "library" && <AssetLibraryView />}
+            {view === "library" && <AssetLibraryView onNavigate={navigate} />}
           </div>
         )}
       </main>
