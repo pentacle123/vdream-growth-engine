@@ -1,575 +1,379 @@
-// Brandformance Engine — 18 Opportunities across 3 categories
-// 트립닷컴 Brandformance Engine 구조를 브이드림 B2B에 맞게 번역
+// 기회 발견 & 콘텐츠 전략 — 18 Opportunities × 3 Categories
+// OPPORTUNITY-SPEC.md 스키마 그대로 적용
+// 트립닷컴 Brandformance Engine 방법론 → 브이드림 B2B
 
 export const CATEGORIES = [
   {
-    key: "usp",
-    code: "A",
-    title: "VDream USP 기반 기회",
-    tagline: "브이드림의 핵심 가치제안에서 출발한 숏폼 콘텐츠 기회",
-    color: "#00C9A7",
+    key: "A",
+    title: "VDream USP 기반",
     icon: "💎",
+    color: "#00C9A7",
+    tagline: "브이드림의 핵심 가치제안에서 출발한 숏폼 기회",
   },
   {
-    key: "context",
-    code: "B",
-    title: "제도/상황 기반 기회",
-    tagline: "소비자가 처한 제도적·비즈니스 상황에서 출발한 기회",
-    color: "#1D85EB",
+    key: "B",
+    title: "제도/상황 기반",
     icon: "⚖️",
+    color: "#1D85EB",
+    tagline: "소비자가 처한 제도적·비즈니스 상황에서 출발한 기회",
   },
   {
-    key: "interest",
-    code: "C",
-    title: "숨겨진 진입점 — 관심사 기반 기회",
-    tagline: "장애인 고용과 직접 관련 없는 관심사에서 브이드림을 '발견'하게 하는 기회",
-    color: "#A78BFA",
+    key: "C",
+    title: "숨겨진 진입점",
     icon: "🔍",
+    color: "#A78BFA",
+    tagline: "장애인 고용과 직접 관련 없는 관심사에서 브이드림을 발견하게 하는 기회",
   },
 ];
 
 export const OPPORTUNITIES = [
-  // ============================================================
-  // A: VDream USP 기반 (6개)
-  // ============================================================
+  // ── A. VDream USP 기반 ──
   {
-    id: "A-1",
-    category: "usp",
+    id: "A1",
+    cat: "A",
     emoji: "💰",
     title: "부담금보다 싸다",
-    target: "부담금 납부 중인 HR 관리자·CFO",
+    target: "부담금 납부 중인 HR/CFO",
+    signal: "'장애인 고용부담금' 월 7,986회, CPC $5.08",
     insight:
-      "매년 부담금을 내면서 '이게 맞나?'라는 의문을 가진 사람. 부담금 vs 채용비용 비교를 숫자로 보여주면 즉시 설득 가능.",
-    signals: [
-      "'장애인 고용부담금' 월 7,986회 검색 (연간 57,050회 누적)",
-      "'고용부담금 계산' 월 424회 검색, CPC $3.86",
-    ],
+      "매년 부담금을 내면서 '이게 맞나?' 의문을 가진 사람. 비교 숫자로 즉시 설득 가능.",
     contents: [
-      {
-        type: "충격형",
-        title: "당신 회사가 매년 ○억 버리고 있습니다",
-        desc: "숫자 시뮬레이션으로 부담금 규모 각인",
-        duration: "30초",
-      },
-      {
-        type: "비교형",
-        title: "부담금 vs 브이드림, 뭐가 더 싸을까?",
-        desc: "인포그래픽 기반 ROI 비교",
-        duration: "45초",
-      },
+      { type: "충격형", title: "당신 회사가 매년 ○억 버리고 있습니다", dur: "30초", score: 95 },
+      { type: "비교형", title: "부담금 vs 브이드림, 뭐가 더 싸을까?", dur: "45초", score: 90 },
     ],
-    creators: [
-      { name: "HR/노무 전문", fit: 95 },
-      { name: "금융/세무 전문", fit: 80 },
-    ],
+    creators: ["HR/노무 전문(95%)", "금융/세무(80%)"],
     platforms: ["유튜브 쇼츠", "링크드인"],
-    season: "연중 상시 (1월·연말 강화)",
-    ctas: ["diagnose"],
+    cta: "진단기",
     score: 95,
   },
   {
-    id: "A-2",
-    category: "usp",
+    id: "A2",
+    cat: "A",
     emoji: "🏠",
     title: "재택근무로 해결",
-    target: "장애인 고용 의무는 알지만 편의시설·공간이 부담인 기업",
+    target: "편의시설·공간 부담인 기업",
+    signal: "'장애인 재택근무' 월 526회, 여성 65%",
     insight:
-      "'장애인을 우리 사무실에서 어떻게 일하게 하지?'라는 고정관념이 최대 장벽. 재택근무라는 해결책 자체를 모르는 사람이 많음.",
-    signals: ["'장애인 재택근무' 월 526회 — 여성 65%, 30대 34%"],
+      "'사무실에서 어떻게 일하게 하지?'라는 고정관념이 최대 장벽. 재택이라는 해결책 자체를 모름.",
     contents: [
-      {
-        type: "스토리형",
-        title: "이 회사는 사무실 개조 없이 장애인 10명을 채용했다",
-        desc: "실제 도입 스토리텔링",
-        duration: "60초",
-      },
-      {
-        type: "교육형",
-        title: "장애인 재택근무, 이렇게 쉽습니다",
-        desc: "제도 + 플립 시스템 개요",
-        duration: "30초",
-      },
+      { type: "스토리형", title: "사무실 개조 없이 장애인 10명을 채용한 회사", dur: "60초", score: 88 },
+      { type: "교육형", title: "장애인 재택근무, 이렇게 쉽습니다", dur: "30초", score: 82 },
     ],
-    creators: [
-      { name: "장애인 당사자 크리에이터", fit: 82 },
-      { name: "경영/비즈니스", fit: 88 },
-    ],
+    creators: ["장애인 당사자(82%)", "경영/비즈(88%)"],
     platforms: ["유튜브", "인스타 릴스"],
-    season: "연중 상시",
-    ctas: ["diagnose", "consult"],
+    cta: "진단기",
     score: 88,
   },
   {
-    id: "A-3",
-    category: "usp",
+    id: "A3",
+    cat: "A",
     emoji: "⚡",
     title: "2~4주면 끝",
-    target: "자회사형 표준사업장 검토 중이거나 도입 속도가 중요한 기업",
+    target: "도입 속도가 중요한 기업",
+    signal: "자회사형 표준사업장 대비 속도·비용 비교",
     insight:
-      "자회사형은 별도 법인 + 시설 구축에 수억원과 수개월 소요. 브이드림은 2~4주면 도입 완료.",
-    signals: [],
+      "자회사형은 수억원+수개월. 브이드림은 2~4주. 의사결정 속도가 빠른 기업에 최적.",
     contents: [
-      {
-        type: "비교형",
-        title: "자회사형 vs 재택근무 직접채용, 속도와 비용 비교",
-        desc: "도입 타임라인 인포그래픽",
-        duration: "45초",
-      },
+      { type: "비교형", title: "자회사형 vs 재택 직접채용, 속도와 비용", dur: "45초", score: 82 },
     ],
-    creators: [{ name: "경영/비즈니스", fit: 88 }],
-    platforms: ["링크드인", "유튜브 쇼츠"],
-    season: "연중 상시",
-    ctas: ["diagnose"],
+    creators: ["경영/비즈(88%)"],
+    platforms: ["유튜브 쇼츠", "링크드인"],
+    cta: "진단기",
     score: 82,
   },
   {
-    id: "A-4",
-    category: "usp",
+    id: "A4",
+    cat: "A",
     emoji: "🛡️",
     title: "분쟁률 0%",
-    target: "장애인 고용 시 노무·법적 리스크를 걱정하는 HR·법무팀",
+    target: "노무·법적 리스크 걱정하는 HR/법무",
+    signal: "450+사, 24,000명, 분쟁 0건 트랙레코드",
     insight:
-      "'장애인 채용하면 문제 생기면 어쩌지?'가 숨겨진 장벽. 브이드림 450+사 분쟁 0건이라는 트랙레코드가 가장 강력한 설득.",
-    signals: [],
+      "'채용하면 문제 생기면?'이 숨겨진 장벽. 0% 실적이 가장 강력한 설득.",
     contents: [
-      {
-        type: "신뢰형",
-        title: "450개 기업, 24,000명 채용, 분쟁 0건",
-        desc: "숫자 나열로 신뢰도 각인",
-        duration: "30초",
-      },
-      {
-        type: "후기형",
-        title: "노동부 감사도 걱정 없었어요",
-        desc: "고객 후기 클립",
-        duration: "30초",
-      },
+      { type: "신뢰형", title: "450개 기업, 24,000명 채용, 분쟁 0건", dur: "30초", score: 90 },
+      { type: "후기형", title: "노동부 감사도 걱정 없었어요", dur: "45초", score: 85 },
     ],
-    creators: [{ name: "HR/노무 전문", fit: 95 }],
+    creators: ["HR/노무 전문(95%)"],
     platforms: ["유튜브 쇼츠", "링크드인"],
-    season: "연중 상시",
-    ctas: ["consult"],
+    cta: "상담",
     score: 90,
   },
   {
-    id: "A-5",
-    category: "usp",
+    id: "A5",
+    cat: "A",
     emoji: "📋",
     title: "플립 하나로 끝",
-    target: "채용 후 관리(근태·급여·증빙)가 부담인 HR",
-    insight: "채용 자체보다 '채용 후 어떻게 관리하지?'가 더 큰 두려움.",
-    signals: [],
+    target: "채용 후 관리 부담인 HR",
+    signal: "미팅자료: 관리 인프라 부족이 고용 실패 최대 원인",
+    insight:
+      "채용보다 '채용 후 어떻게 관리?'가 더 큰 두려움. 플립이 이걸 해결.",
     contents: [
-      {
-        type: "데모형",
-        title: "플립 시스템 30초 미리보기",
-        desc: "화면 녹화 기반 기능 시연",
-        duration: "30초",
-      },
-      {
-        type: "고객후기형",
-        title: "플립 쓰니까 한 화면에서 다 해결돼요",
-        desc: "실제 HR 담당자 후기",
-        duration: "45초",
-      },
+      { type: "데모형", title: "플립 시스템 30초 미리보기", dur: "30초", score: 85 },
+      { type: "후기형", title: "한 화면에서 다 해결돼요", dur: "45초", score: 80 },
     ],
-    creators: [{ name: "HR/노무 전문", fit: 95 }],
-    platforms: ["유튜브 쇼츠", "링크드인"],
-    season: "연중 상시",
-    ctas: ["consult"],
+    creators: ["HR/노무 전문(95%)"],
+    platforms: ["유튜브 쇼츠"],
+    cta: "상담",
     score: 85,
   },
   {
-    id: "A-6",
-    category: "usp",
+    id: "A6",
+    cat: "A",
     emoji: "🏆",
     title: "시장 1위의 신뢰",
-    target: "여러 업체를 비교 검토 중인 의사결정자",
-    insight:
-      "'장애인 고용 대행' 검색 시 여러 업체가 나오는데, 브이드림의 압도적 실적(450사, 24,000명, 8,300억 절감)이 차별점.",
-    signals: [],
+    target: "여러 업체 비교 중인 의사결정자",
+    signal: "450사, 24,000명, 8,300억 절감 실적",
+    insight: "경쟁사 대비 압도적 규모. 비교 검토 단계에서 결정타.",
     contents: [
-      {
-        type: "실적형",
-        title: "장애인 채용 시장 점유율 1위, 브이드림",
-        desc: "실적 숫자 몽타주",
-        duration: "30초",
-      },
+      { type: "실적형", title: "장애인 채용 시장 1위, 브이드림", dur: "30초", score: 80 },
     ],
-    creators: [{ name: "경영/비즈니스", fit: 88 }],
-    platforms: ["링크드인", "유튜브"],
-    season: "연중 상시",
-    ctas: ["diagnose"],
+    creators: ["경영/비즈(88%)"],
+    platforms: ["유튜브", "링크드인"],
+    cta: "진단기",
     score: 80,
   },
 
-  // ============================================================
-  // B: 제도/상황 기반 (6개)
-  // ============================================================
+  // ── B. 제도/상황 기반 ──
   {
-    id: "B-1",
-    category: "context",
+    id: "B1",
+    cat: "B",
     emoji: "📅",
     title: "1월 신고 공포",
-    target: "매년 1월 부담금 신고를 처리하는 인사·경리 실무자",
+    target: "매년 1월 부담금 신고 담당 인사·경리 실무자",
+    signal:
+      "'장애인고용부담금 신고' 1월 3,890회(15배 폭등), 여성55%, 30대38%",
     insight:
-      "30대 여성 인사 실무자가 매년 반복되는 신고 업무에서 느끼는 피로감과 '올해는 다르게 할 수 없나?'라는 욕구.",
-    signals: [
-      "'장애인고용부담금 신고' 1월 3,890회 — 평소 대비 15배 폭등",
-      "검색자 인구통계: 여성 55%, 30대 38%, 40대 36%",
-    ],
+      "30대 여성 인사실무자의 매년 반복되는 피로. '올해는 다르게 할 수 없나?'",
     contents: [
-      {
-        type: "공감형",
-        title: "HR 담당자의 1월은 왜 이렇게 바쁜가",
-        desc: "직장인 공감 톤",
-        duration: "30초",
-      },
-      {
-        type: "솔루션형",
-        title: "내년 1월엔 이 신고 안 해도 됩니다",
-        desc: "부담금 → 채용 전환 메시지",
-        duration: "45초",
-      },
+      { type: "공감형", title: "HR 담당자의 1월은 왜 이렇게 바쁜가", dur: "30초", score: 92 },
+      { type: "솔루션형", title: "내년 1월엔 이 신고 안 해도 됩니다", dur: "45초", score: 95 },
     ],
-    creators: [
-      { name: "직장인 공감 숏폼", fit: 75 },
-      { name: "HR/노무 전문", fit: 95 },
-    ],
+    creators: ["직장인 공감(75%)", "HR/노무(95%)"],
     platforms: ["인스타 릴스", "유튜브 쇼츠"],
-    season: "10~1월 집중",
-    ctas: ["diagnose"],
+    cta: "진단기",
+    season: "10~1월",
     score: 95,
   },
   {
-    id: "B-2",
-    category: "context",
+    id: "B2",
+    cat: "B",
     emoji: "⚖️",
     title: "손금 처리 가능?",
-    target: "부담금을 비용(손금)으로 처리하려는 회계·세무 담당자",
+    target: "부담금 비용처리하려는 회계·세무 담당자",
+    signal:
+      "PathFinder: 부담금→손금불산입→경정청구→대법원판결. 노출1,240회 클릭0",
     insight:
-      "최근 대법원 판결 이후 세무 담당자들이 '우리도 경정청구 가능한가?' 대량 검색 중. 이 사람을 '부담금 안 내는 게 최선의 절세'로 리프레이밍.",
-    signals: [
-      "PathFinder: 고용부담금 → 손금 불산입 → 경정청구 → 대법원 판결",
-    ],
+      "최근 대법원 판결 이후 '경정청구 가능한가?' 대량 검색. 리프레이밍 기회.",
     contents: [
-      {
-        type: "뉴스형",
-        title: "고용부담금 대법원 판결, 세무 담당자가 알아야 할 것",
-        desc: "판결 해설 + 대응법",
-        duration: "45초",
-      },
-      {
-        type: "전환형",
-        title: "손금 처리보다 더 좋은 방법이 있습니다",
-        desc: "절세 프레임 → 진단기",
-        duration: "30초",
-      },
+      { type: "뉴스형", title: "고용부담금 대법원 판결, 세무담당자 필독", dur: "45초", score: 88 },
+      { type: "전환형", title: "손금 처리보다 더 좋은 방법이 있습니다", dur: "30초", score: 90 },
     ],
-    creators: [{ name: "금융/세무 전문", fit: 80 }],
+    creators: ["금융/세무(80%)"],
     platforms: ["유튜브 쇼츠", "네이버 클립"],
-    season: "판결·정책 이슈 발생 시",
-    ctas: ["diagnose"],
+    cta: "진단기",
     score: 88,
   },
   {
-    id: "B-3",
-    category: "context",
+    id: "B3",
+    cat: "B",
     emoji: "📢",
     title: "명단 공표 리스크",
-    target: "기업 이미지를 중시하는 CEO·경영진",
+    target: "기업 이미지 중시하는 CEO/경영진",
+    signal: "장애인 고용의무 불이행 명단공표 클러스터",
     insight:
-      "매년 고용노동부가 불이행 기업 명단을 공표. CEO 입장에서 가장 민감한 리스크.",
-    signals: ["ClusterFinder: '장애인 고용의무 불이행 명단공표' 클러스터"],
+      "매년 고용노동부가 명단 공표. CEO가 가장 민감하게 반응하는 리스크.",
     contents: [
-      {
-        type: "위기형",
-        title: "당신 회사, 명단 공표 대상인지 확인하세요",
-        desc: "자가진단 후킹",
-        duration: "30초",
-      },
-      {
-        type: "데이터형",
-        title: "2024년 명단에 오른 기업들의 공통점",
-        desc: "데이터 기반 리스크 분석",
-        duration: "45초",
-      },
+      { type: "위기형", title: "당신 회사, 명단 공표 대상인지 확인하세요", dur: "30초", score: 96 },
+      { type: "데이터형", title: "2024년 명단에 오른 기업들의 공통점", dur: "45초", score: 88 },
     ],
-    creators: [{ name: "경영/비즈니스", fit: 88 }],
-    platforms: ["링크드인", "유튜브"],
-    season: "공표 시점 전후 (3~4월 집중)",
-    ctas: ["diagnose"],
+    creators: ["경영/비즈(88%)"],
+    platforms: ["유튜브", "링크드인"],
+    cta: "진단기",
     score: 96,
   },
   {
-    id: "B-4",
-    category: "context",
+    id: "B4",
+    cat: "B",
     emoji: "🔄",
     title: "연계고용 vs 직접고용",
-    target: "직접 채용 외 대안을 검토 중인 HR 관리자",
+    target: "직접 채용 외 대안 검토 중인 HR",
+    signal: "ClusterFinder: 연계고용, 도급계약, 부담금 감면",
     insight:
-      "'직접 채용은 부담스러운데 다른 방법 없나?' — 연계고용을 검토하는 사람을 직접채용(브이드림)이 더 유리하다고 설득.",
-    signals: [
-      "ClusterFinder: '연계고용', '도급계약', '부담금 감면' 클러스터",
-    ],
+      "'직접 채용은 부담'인 사람을 '브이드림이 더 유리'로 설득.",
     contents: [
-      {
-        type: "비교형",
-        title: "연계고용 vs 직접채용, 비용·효과 완전 비교",
-        desc: "실제 시나리오 기반 비교",
-        duration: "60초",
-      },
+      { type: "비교형", title: "연계고용 vs 직접채용, 비용·효과 완전 비교", dur: "60초", score: 85 },
     ],
-    creators: [{ name: "HR/노무 전문", fit: 95 }],
-    platforms: ["유튜브 쇼츠", "링크드인"],
-    season: "연중 상시",
-    ctas: ["diagnose"],
+    creators: ["HR/노무(95%)"],
+    platforms: ["유튜브 쇼츠"],
+    cta: "진단기",
     score: 85,
   },
   {
-    id: "B-5",
-    category: "context",
+    id: "B5",
+    cat: "B",
     emoji: "📈",
     title: "ESG 점수 올리기",
-    target: "ESG 경영 압박을 받는 경영진·CSR 담당자",
+    target: "ESG 압박받는 경영진·CSR 담당",
+    signal: "'ESG 장애인' 검색 존재, 트렌드 상승",
     insight:
-      "ESG 평가에서 장애인 고용은 사회(S) 부문의 핵심 지표인데, 이걸 명시적으로 연결하는 콘텐츠가 거의 없음.",
-    signals: ["'ESG 장애인' 검색 존재 — 볼륨은 작지만 트렌드 상승"],
+      "ESG 사회(S) 부문 핵심 지표인데 연결 콘텐츠가 거의 없음.",
     contents: [
-      {
-        type: "트렌드형",
-        title: "ESG 등급 올리는 가장 빠른 방법: 장애인 고용",
-        desc: "ESG 평가 항목 연결",
-        duration: "45초",
-      },
+      { type: "트렌드형", title: "ESG 등급 올리는 가장 빠른 방법: 장애인 고용", dur: "45초", score: 83 },
     ],
-    creators: [{ name: "경영/비즈니스", fit: 88 }],
+    creators: ["경영/비즈(88%)"],
     platforms: ["링크드인", "유튜브"],
-    season: "ESG 보고서 시즌 (2~3월, 9~10월)",
-    ctas: ["consult"],
+    cta: "상담",
     score: 83,
   },
   {
-    id: "B-6",
-    category: "context",
+    id: "B6",
+    cat: "B",
     emoji: "💸",
     title: "부담금 인상 대비",
-    target: "제도 변화를 주시하는 HR 관리자·경영진",
+    target: "제도 변화 주시하는 HR/경영진",
+    signal:
+      "'고용부담금 인상' 증가, '2026년 장애인 고용부담금' 남성92% 40대38%",
     insight:
-      "대통령이 부담금 인상 검토를 언급한 이후 경영진급이 직접 검색. 긴급성 최고.",
-    signals: [
-      "'고용부담금 인상' 검색 증가",
-      "'2026년 장애인 고용부담금' — 남성 92%, 40대 38%, 30대 38%",
-    ],
+      "대통령 부담금 인상 검토 언급 이후 경영진급 직접 검색. 긴급성 최고.",
     contents: [
-      {
-        type: "속보형",
-        title: "고용부담금 인상 확정? 지금 대비해야 할 3가지",
-        desc: "정책 이슈 즉시 대응",
-        duration: "30초",
-      },
+      { type: "속보형", title: "고용부담금 인상 확정? 지금 대비해야 할 3가지", dur: "30초", score: 93 },
     ],
-    creators: [
-      { name: "HR/노무 전문", fit: 95 },
-      { name: "금융/세무 전문", fit: 80 },
-    ],
+    creators: ["HR/노무(95%)", "금융/세무(80%)"],
     platforms: ["유튜브 쇼츠", "링크드인"],
-    season: "정책 발표 시 즉시 대응",
-    ctas: ["diagnose"],
+    cta: "진단기",
+    season: "정책발표시",
     score: 93,
   },
 
-  // ============================================================
-  // C: 숨겨진 진입점 (6개)
-  // ============================================================
+  // ── C. 숨겨진 진입점 ──
   {
-    id: "C-1",
-    category: "interest",
+    id: "C1",
+    cat: "C",
     emoji: "🏢",
     title: "대기업은 어떻게?",
-    target: "다른 기업의 장애인 고용 사례를 벤치마킹하려는 HR·경영진",
+    target: "다른 기업 사례 벤치마킹하려는 HR/경영진",
+    signal: "'쿠팡 장애인 재택근무 후기', '삼성 장애인 채용' 대량 검색",
     insight:
-      "쿠팡·삼성 등 대기업 사례를 찾는 사람에게 '대기업도 하고 있고, 당신도 할 수 있다'는 FOMO + 실행법을 동시에 전달.",
-    signals: [
-      "'쿠팡 장애인 재택근무 후기' 대량 검색",
-      "'삼성 장애인 채용' 대량 검색",
-    ],
+      "대기업 사례 FOMO + '우리도 할 수 있다'는 실행법 동시 전달.",
     contents: [
-      {
-        type: "사례형",
-        title: "쿠팡이 장애인 재택근무를 시작한 이유",
-        desc: "60초 스토리텔링",
-        duration: "60초",
-      },
-      {
-        type: "FOMO형",
-        title: "대기업이 이미 시작한 것, 당신 회사는?",
-        desc: "벤치마킹 자극",
-        duration: "30초",
-      },
+      { type: "사례형", title: "쿠팡이 장애인 재택근무를 시작한 이유", dur: "60초", score: 87 },
+      { type: "FOMO형", title: "대기업이 이미 시작한 것, 당신 회사는?", dur: "30초", score: 85 },
     ],
-    creators: [
-      { name: "경영/비즈니스", fit: 88 },
-      { name: "장애인 당사자 크리에이터", fit: 82 },
-    ],
+    creators: ["경영/비즈(88%)", "장애인 당사자(82%)"],
     platforms: ["유튜브", "링크드인"],
-    season: "연중 상시",
-    ctas: ["diagnose", "consult"],
+    cta: "상담",
     score: 87,
   },
   {
-    id: "C-2",
-    category: "interest",
+    id: "C2",
+    cat: "C",
     emoji: "👔",
     title: "신입 HR의 장애인 고용 입문",
-    target: "장애인 고용 제도를 처음 접하는 HR 신입/이직자",
+    target: "제도 처음 접하는 HR 신입/이직자",
+    signal: "PathFinder: 장애인 고용→고용촉진→고용법→부담금",
     insight:
-      "제도 전체를 파악하려는 초기 탐색자에게 '3분이면 다 이해된다'는 교육 콘텐츠. 이 사람이 나중에 의사결정자가 됨.",
-    signals: [
-      "PathFinder: 장애인 고용 → 고용촉진 → 고용법 → 부담금 (입문 경로)",
-    ],
+      "제도 전체 파악하려는 초기 탐색자. 교육 시리즈로 미래 의사결정자 확보.",
     contents: [
-      {
-        type: "시리즈형",
-        title: "신입 HR을 위한 장애인 고용 ABC (3편 시리즈)",
-        desc: "제도 개요 → 부담금 → 채용법",
-        duration: "각 45초",
-      },
+      { type: "시리즈형", title: "신입 HR을 위한 장애인 고용 ABC (3편)", dur: "60초×3", score: 78 },
     ],
-    creators: [{ name: "HR/노무 전문", fit: 95 }],
-    platforms: ["유튜브 쇼츠", "인스타 릴스"],
-    season: "연중 상시 (3월·9월 입사 시즌 강화)",
-    ctas: ["diagnose"],
+    creators: ["HR/노무(95%)"],
+    platforms: ["유튜브 쇼츠"],
+    cta: "진단기",
     score: 78,
   },
   {
-    id: "C-3",
-    category: "interest",
+    id: "C3",
+    cat: "C",
     emoji: "👩‍💼",
     title: "여성 HR 실무자의 시즌 업무",
-    target: "매년 1월 신고 업무를 담당하는 30대 여성 인사담당",
+    target: "매년 1월 신고 담당 30대 여성 인사담당",
+    signal: "부담금 신고 검색자 여성55%, 30대38%",
     insight:
-      "이 사람은 '장애인 고용'이 아니라 '내 업무를 줄이고 싶다'가 본심. 브이드림이 신고 업무까지 대행한다는 메시지.",
-    signals: ["부담금 신고 검색자 인구통계: 여성 55%, 30대 38%"],
+      "'장애인 고용'이 아니라 '내 업무를 줄이고 싶다'가 본심.",
     contents: [
-      {
-        type: "공감형",
-        title: "매년 1월이 두려운 HR에게",
-        desc: "릴스 공감 톤",
-        duration: "30초",
-      },
-      {
-        type: "솔루션형",
-        title: "이 업무, 시스템이 대신하면?",
-        desc: "플립 데모",
-        duration: "45초",
-      },
+      { type: "공감형", title: "매년 1월이 두려운 HR에게", dur: "30초", score: 85 },
+      { type: "솔루션형", title: "이 업무, 시스템이 대신하면?", dur: "30초", score: 82 },
     ],
-    creators: [{ name: "직장인 공감 숏폼", fit: 75 }],
+    creators: ["직장인 공감(75%)"],
     platforms: ["인스타 릴스"],
-    season: "10~1월 집중",
-    ctas: ["diagnose"],
+    cta: "진단기",
+    season: "10~1월",
     score: 85,
   },
   {
-    id: "C-4",
-    category: "interest",
+    id: "C4",
+    cat: "C",
     emoji: "🤝",
-    title: "기업 관점 블루오션",
-    target: "'장애인 채용'을 검색하는 기업 HR (현재 구직자 콘텐츠에 묻혀 있음)",
+    title: "장애인 채용, 기업 관점 블루오션",
+    target: "'장애인 채용' 검색하는 기업 HR",
+    signal: "'장애인 채용' 월5,110회이나 구직자 콘텐츠가 지배적",
     insight:
-      "거대한 검색 시장에서 기업 관점 콘텐츠가 거의 없음. '기업을 위한 장애인 채용 가이드' 콘텐츠를 만들면 블루오션.",
-    signals: [
-      "'장애인 채용' 월 5,110회 — PathFinder상 구직자 경로 지배적",
-    ],
+      "거대한 검색 시장에서 기업 관점 콘텐츠 거의 없음. 블루오션.",
     contents: [
-      {
-        type: "교육형",
-        title: "장애인 채용, 기업 담당자를 위한 3분 정리",
-        desc: "기업 관점 가이드",
-        duration: "60초",
-      },
+      { type: "교육형", title: "장애인 채용, 기업 담당자를 위한 3분 정리", dur: "60초", score: 82 },
     ],
-    creators: [{ name: "HR/노무 전문", fit: 95 }],
-    platforms: ["유튜브 쇼츠", "링크드인"],
-    season: "연중 상시",
-    ctas: ["diagnose"],
+    creators: ["HR/노무(95%)"],
+    platforms: ["유튜브 쇼츠", "네이버 클립"],
+    cta: "진단기",
     score: 82,
   },
   {
-    id: "C-5",
-    category: "interest",
+    id: "C5",
+    cat: "C",
     emoji: "💼",
     title: "비용 최적화 HR 트렌드",
-    target: "인건비·운영비 절감을 고민하는 CFO·HR",
+    target: "인건비·운영비 절감 고민 CFO/HR",
+    signal: "부담금 연 수억인 기업에 '비용 제로화' 프레임",
     insight:
-      "'장애인 고용'이 아니라 '비용 최적화' 맥락에서 접근. 부담금이 연간 수억인 기업에게 '이 비용을 제로로 만들 수 있다'는 프레임.",
-    signals: [],
+      "'장애인 고용'이 아닌 '비용 최적화' 맥락에서 접근하면 CFO 직접 어필.",
     contents: [
-      {
-        type: "인사이트형",
-        title: "HR 비용 줄이는 법: 아무도 안 알려주는 한 가지",
-        desc: "티저 인사이트",
-        duration: "30초",
-      },
+      { type: "인사이트형", title: "HR 비용 줄이는 법: 아무도 안 알려주는 한 가지", dur: "30초", score: 80 },
     ],
-    creators: [{ name: "경영/비즈니스", fit: 88 }],
-    platforms: ["링크드인", "유튜브"],
-    season: "예산 편성기 (7~11월)",
-    ctas: ["diagnose"],
+    creators: ["경영/비즈(88%)"],
+    platforms: ["링크드인", "유튜브 쇼츠"],
+    cta: "진단기",
     score: 80,
   },
   {
-    id: "C-6",
-    category: "interest",
+    id: "C6",
+    cat: "C",
     emoji: "🌱",
     title: "착한 기업 이미지 만들기",
-    target: "CSR·사회공헌·브랜딩에 관심 있는 마케팅·경영진",
+    target: "CSR·브랜딩 관심 마케팅/경영진",
+    signal: "ESG + 사회공헌 + 장애 예술인 프로그램(브이아트갤러리)",
     insight:
-      "장애인 고용을 '의무'가 아닌 '브랜드 자산'으로 리프레이밍. 브이드림이 만들어주는 사회적 가치 스토리.",
-    signals: [],
+      "장애인 고용을 '의무'가 아닌 '브랜드 자산'으로 리프레이밍. 브이아트갤러리 사례 활용.",
     contents: [
-      {
-        type: "브랜디드 다큐",
-        title: "이 회사가 장애인 고용 후 달라진 것들",
-        desc: "60초 브랜드 스토리",
-        duration: "60초",
-      },
+      { type: "다큐형", title: "이 회사가 장애인 고용 후 달라진 것들", dur: "60초", score: 78 },
+      { type: "아트형", title: "장애 예술인이 만든 기업 굿즈 이야기", dur: "45초", score: 75 },
     ],
-    creators: [
-      { name: "장애인 당사자 크리에이터", fit: 82 },
-      { name: "경영/비즈니스", fit: 88 },
-    ],
+    creators: ["장애인 당사자(82%)", "경영/비즈(88%)"],
     platforms: ["유튜브", "인스타 릴스"],
-    season: "연말 시상 시즌 (12월), 장애인의날 (4월)",
-    ctas: ["consult"],
+    cta: "상담",
     score: 78,
   },
 ];
 
+// CTA 메타 (스펙: "진단기" / "상담" 두 종류)
 export const CTA_META = {
-  diagnose: {
+  진단기: {
     label: "AI 진단기로 이동",
     emoji: "🔍",
     description: "우리 회사 고용부담금 즉시 계산",
-    view: "diagnose", // 앱 내 뷰 키
+    view: "diagnose",
   },
-  consult: {
+  상담: {
     label: "브이드림 무료 상담 신청",
     emoji: "💬",
     description: "450+ 기업이 선택한 장애인 고용 파트너",
     href: "https://www.vdream.co.kr/inquiry",
   },
-  phone: {
-    label: "1644-8619 전화 상담",
-    emoji: "📞",
-    description: "평일 09:00~18:00",
-    href: "tel:1644-8619",
-  },
 };
 
-export function byCategory(key) {
-  return OPPORTUNITIES.filter((o) => o.category === key);
+// 헬퍼
+export function byCategory(catKey) {
+  return OPPORTUNITIES.filter((o) => o.cat === catKey);
 }
 
 export function findOpportunity(id) {
@@ -578,4 +382,14 @@ export function findOpportunity(id) {
 
 export function findCategory(key) {
   return CATEGORIES.find((c) => c.key === key);
+}
+
+/**
+ * "HR/노무 전문(95%)" → { name: "HR/노무 전문", fit: 95 }
+ */
+export function parseCreator(s) {
+  const m = String(s).match(/^(.+?)\((\d+)%\)\s*$/);
+  return m
+    ? { name: m[1].trim(), fit: parseInt(m[2], 10) }
+    : { name: String(s), fit: 0 };
 }

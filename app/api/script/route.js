@@ -1,12 +1,13 @@
 // POST /api/script
-// 기회 + 콘텐츠 아이디어를 받아 Claude API로 숏폼 스크립트를 생성
-// Request:  { opportunity, content? } — opportunity는 필수, content는 선택 (특정 콘텐츠 아이디어)
+// 기회 + 콘텐츠 아이디어 → Claude API → 숏폼 스크립트
+// Request:  { opportunity, content? }
 // Response: { hook, problem, solution, proof, cta, caption, hashtags[], thumbnail }
 
 export const runtime = "nodejs";
 
-const FALLBACK_TEMPLATE = (opp, content) => {
-  const ctaText = (opp.ctas || []).includes("consult")
+const FALLBACK = (opp, content) => {
+  const isConsult = opp.cta === "상담";
+  const ctaText = isConsult
     ? "지금 브이드림 무료 상담 신청하세요 → vdream.co.kr/inquiry"
     : "지금 AI 진단기로 우리 회사 부담금을 확인하세요";
   const title = content?.title || opp.title;
@@ -32,24 +33,21 @@ const FALLBACK_TEMPLATE = (opp, content) => {
 
 function buildPrompt(opp, content) {
   const contentLine = content
-    ? `- 선택 콘텐츠: [${content.type}] "${content.title}" (${content.duration}) — ${content.desc}`
+    ? `- 선택 콘텐츠: [${content.type}] "${content.title}" (${content.dur || content.duration || "30~60초"})`
     : "- 선택 콘텐츠: 기회 전체를 포괄하는 대표 스크립트";
 
-  const signalsBlock =
-    Array.isArray(opp.signals) && opp.signals.length > 0
-      ? `\n[검색 시그널]\n${opp.signals.map((s) => `- ${s}`).join("\n")}`
-      : "";
+  const signalBlock = opp.signal
+    ? `\n[검색 데이터 시그널]\n- ${opp.signal}`
+    : "";
 
-  const ctasBlock = (opp.ctas || [])
-    .map((c) => {
-      if (c === "diagnose") return "AI 진단기(우리 회사 부담금 계산)";
-      if (c === "consult") return "브이드림 무료 상담(vdream.co.kr/inquiry)";
-      if (c === "phone") return "1644-8619 전화 상담";
-      return c;
-    })
-    .join(", ");
+  const ctaBlock =
+    opp.cta === "진단기"
+      ? "AI 진단기(우리 회사 부담금 즉시 계산)"
+      : opp.cta === "상담"
+      ? "브이드림 무료 상담(vdream.co.kr/inquiry, 1644-8619)"
+      : opp.cta || "진단기";
 
-  return `당신은 B2B 숏폼 콘텐츠 전략가입니다. 브이드림(장애인 재택근무 인사관리 SaaS, 국내 시장 점유율 1위)의 숏폼 스크립트를 작성하세요.
+  return `당신은 브이드림(장애인 재택근무 SaaS 1위)의 숏폼 콘텐츠 크리에이터입니다. 다음 기회의 숏폼 스크립트를 작성하세요.
 
 [기회 정보]
 - ID: ${opp.id} ${opp.emoji} ${opp.title}
@@ -58,13 +56,13 @@ function buildPrompt(opp, content) {
 ${contentLine}
 - 추천 플랫폼: ${(opp.platforms || []).join(", ")}
 - 시즌: ${opp.season || "연중 상시"}
-- CTA 종류: ${ctasBlock || "진단기"}${signalsBlock}
+- CTA: ${ctaBlock}${signalBlock}
 
 [브이드림 핵심 USP]
 - 450+ 기업 고객, 24,000명 누적 채용, 법적·노무 분쟁률 0%
 - 재택근무 기반 → 편의시설·공간 투자 불필요
 - 2~4주 내 도입 완료 (자회사형 대비 10배 빠름)
-- 플립(Flipped) 시스템으로 근태·급여·증빙 한 화면 관리
+- 플립(Flipped) 시스템 — 채용·근태·급여·증빙 한 화면 관리
 - 누적 고용부담금 절감 8,300억원+, 30만명+ 장애인 인재풀
 
 [톤]
@@ -72,16 +70,16 @@ ${contentLine}
 - 과장 없이 숫자로 신뢰도 확보
 - 한국어, 존댓말
 
-JSON만 응답하세요 (백틱·마크다운·설명 금지, 순수 JSON만):
+JSON만 응답 (백틱·마크다운 금지):
 {
-  "hook": "첫 3초 후킹 (강한 질문 or 충격 숫자)",
-  "problem": "문제 제기 5~10초 (타겟 페인 구체화)",
-  "solution": "솔루션 제시 10~20초 (브이드림의 해결법)",
-  "proof": "신뢰 근거 5초 (숫자·고객사·트랙레코드)",
-  "cta": "CTA 한 문장 (명확한 행동 유도)",
-  "caption": "인스타·유튜브 캡션 2~3줄 (이모지 포함)",
-  "hashtags": ["해시태그1","해시태그2","해시태그3","해시태그4","해시태그5"],
-  "thumbnail": "썸네일 텍스트 카피 한 줄"
+  "hook": "첫 3초 후킹 문장 (시청자를 멈추게 하는 한 마디)",
+  "problem": "문제 제기 5~10초 (공감 + 구체적 숫자)",
+  "solution": "솔루션 제시 10~20초 (브이드림이 해결하는 방식)",
+  "proof": "신뢰 근거 5초 (450+사, 0% 분쟁, 절감액 등)",
+  "cta": "CTA 문구 3초",
+  "caption": "인스타/유튜브 게시 캡션 2~3줄 (이모지 포함)",
+  "hashtags": ["#해시태그1","#해시태그2","#해시태그3","#해시태그4","#해시태그5"],
+  "thumbnail": "썸네일 카피 제안 1줄"
 }`;
 }
 
@@ -109,7 +107,7 @@ export async function POST(request) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return Response.json({
-      ...FALLBACK_TEMPLATE(opportunity, content),
+      ...FALLBACK(opportunity, content),
       fallback: true,
       reason: "ANTHROPIC_API_KEY missing",
     });
@@ -126,16 +124,14 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1400,
-        messages: [
-          { role: "user", content: buildPrompt(opportunity, content) },
-        ],
+        messages: [{ role: "user", content: buildPrompt(opportunity, content) }],
       }),
     });
 
     if (!res.ok) {
       const errText = await res.text();
       return Response.json({
-        ...FALLBACK_TEMPLATE(opportunity, content),
+        ...FALLBACK(opportunity, content),
         fallback: true,
         reason: `upstream ${res.status}: ${errText.slice(0, 200)}`,
       });
@@ -149,7 +145,7 @@ export async function POST(request) {
 
     if (!parsed.hook) {
       return Response.json({
-        ...FALLBACK_TEMPLATE(opportunity, content),
+        ...FALLBACK(opportunity, content),
         fallback: true,
         reason: "empty hook",
       });
@@ -158,7 +154,7 @@ export async function POST(request) {
     return Response.json(parsed);
   } catch (err) {
     return Response.json({
-      ...FALLBACK_TEMPLATE(opportunity, content),
+      ...FALLBACK(opportunity, content),
       fallback: true,
       reason: err.message || "unknown error",
     });

@@ -175,7 +175,7 @@ function OverviewSection() {
           }}
         >
           {CATEGORIES.map((cat) => {
-            const opps = OPPORTUNITIES.filter((o) => o.category === cat.key);
+            const opps = OPPORTUNITIES.filter((o) => o.cat === cat.key);
             const avgScore = Math.round(
               opps.reduce((a, o) => a + o.score, 0) / opps.length
             );
@@ -199,7 +199,7 @@ function OverviewSection() {
                     fontFamily: "'JetBrains Mono', monospace",
                   }}
                 >
-                  {cat.icon} CATEGORY {cat.code}
+                  {cat.icon} CATEGORY {cat.key}
                 </div>
                 <div
                   style={{
