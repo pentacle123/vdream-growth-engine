@@ -4,17 +4,17 @@ import { OPPORTUNITIES } from "@/data/opportunities";
 import { TARGET_COMPANIES } from "@/data/targetCompanies";
 
 const C = {
-  bg: "#050a12",
-  sf: "#0c1220",
-  sa: "#141d2e",
+  bg: "#FFFFFF",
+  sf: "#F8FAFC",
+  sa: "#F1F5F9",
   ac: "#00C9A7",
   bl: "#1D85EB",
   pp: "#A78BFA",
   am: "#F59E0B",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 const FEATURES = [
@@ -418,8 +418,8 @@ function FeatureCard({ feature, onClick }) {
                 gap: 8,
                 padding: "7px 9px",
                 borderRadius: 8,
-                background: "rgba(255,255,255,0.025)",
-                border: `1px solid rgba(255,255,255,0.03)`,
+                background: "#F8FAFC",
+                border: `1px solid #F8FAFC`,
               }}
             >
               <span style={{ fontSize: 15, flexShrink: 0 }}>{p.emoji}</span>

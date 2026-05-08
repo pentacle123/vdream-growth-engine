@@ -14,19 +14,19 @@ import {
 import { formatWon } from "@/lib/calculate";
 
 const C = {
-  sf: "#0c1220",
-  sa: "#141d2e",
-  sh: "#1a2540",
+  sf: "#F8FAFC",
+  sa: "#F1F5F9",
+  sh: "#E2E8F0",
   ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",
   pp: "#A78BFA",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  b: "rgba(255,255,255,0.05)",
-  bl2: "rgba(255,255,255,0.08)",
+  b: "#E2E8F0",
+  bl2: "#CBD5E1",
 };
 
 export default function CompanyDB({ companies, onSelect, onStatusChange }) {

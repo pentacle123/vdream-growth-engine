@@ -5,17 +5,17 @@ import Card from "../ui/Card";
 import Spinner from "../ui/Spinner";
 
 const C = {
-  sf: "#0c1220",
-  sa: "#141d2e",
+  sf: "#F8FAFC",
+  sa: "#F1F5F9",
   ac: "#00C9A7",
   bl: "#1D85EB",
   pp: "#A78BFA",
   am: "#F59E0B",
   rd: "#EF4444",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 const SIZES = [
@@ -305,7 +305,7 @@ function BannerPreview({ title, size, html, copied, onCopy }) {
         style={{
           padding: 14,
           background:
-            "repeating-conic-gradient(#0a0f1a 0% 25%, #141d2e 0% 50%) 50% / 16px 16px",
+            "repeating-conic-gradient(#E2E8F0 0% 25%, #F8FAFC 0% 50%) 50% / 16px 16px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",

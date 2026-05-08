@@ -26,18 +26,18 @@ import {
 } from "@/data/naverAdData";
 
 const C = {
-  sf: "#0c1220",
-  sa: "#141d2e",
-  sh: "#1a2540",
+  sf: "#F8FAFC",
+  sa: "#F1F5F9",
+  sh: "#E2E8F0",
   ac: "#00C9A7",
   bl: "#1D85EB",
   pp: "#A78BFA",
   am: "#F59E0B",
   rd: "#EF4444",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 export default function CampaignDiagnosis() {
@@ -165,7 +165,7 @@ export default function CampaignDiagnosis() {
               <BarChart data={groups} margin={{ top: 12, right: 8, left: -12, bottom: 0 }}>
                 <XAxis dataKey="name" tick={{ fill: C.td, fontSize: 9 }} axisLine={{ stroke: C.bl2 }} tickLine={false} interval={0} angle={-12} textAnchor="end" height={48} />
                 <YAxis tick={{ fill: C.td, fontSize: 9 }} axisLine={{ stroke: C.bl2 }} tickLine={false} tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v} />
-                <Tooltip cursor={{ fill: "rgba(255,255,255,0.03)" }} contentStyle={{ background: C.sa, border: `1px solid ${C.bl2}`, borderRadius: 8, fontSize: 11 }} />
+                <Tooltip cursor={{ fill: "#F8FAFC" }} contentStyle={{ background: C.sa, border: `1px solid ${C.bl2}`, borderRadius: 8, fontSize: 11 }} />
                 <Legend wrapperStyle={{ fontSize: 10, color: C.td }} />
                 <Bar dataKey="imp" name="노출" fill={C.bl} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="click" name="클릭" fill={C.ac} radius={[4, 4, 0, 0]} />

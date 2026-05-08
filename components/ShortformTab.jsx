@@ -17,20 +17,20 @@ import {
 import { SEARCH_DATA } from "@/data/searchData";
 
 const C = {
-  bg: "#050a12",
-  sf: "#0c1220",
-  sa: "#141d2e",
-  sh: "#1a2540",
+  bg: "#FFFFFF",
+  sf: "#F8FAFC",
+  sa: "#F1F5F9",
+  sh: "#E2E8F0",
   ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",
   pp: "#A78BFA",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  b: "rgba(255,255,255,0.05)",
-  bl2: "rgba(255,255,255,0.08)",
+  b: "#E2E8F0",
+  bl2: "#CBD5E1",
 };
 
 /* ============================================================
@@ -309,7 +309,7 @@ function CategoryHome({ onSelect }) {
                           style={{
                             padding: "4px 9px",
                             borderRadius: 999,
-                            background: "rgba(255,255,255,0.04)",
+                            background: "#F1F5F9",
                             border: `1px solid ${cat.color}22`,
                             fontSize: 11,
                             color: C.td,
@@ -1076,7 +1076,7 @@ function ScriptOutput({ script, catColor }) {
  * 보조 컴포넌트
  * ============================================================ */
 
-function SectionTitle({ children, color = "#E2E8F0" }) {
+function SectionTitle({ children, color = "#0F172A" }) {
   return (
     <h4 style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 800, color }}>
       {children}
@@ -1118,7 +1118,7 @@ function CTAButton({ ctaKey, onNavigate }) {
     padding: "12px 14px",
     borderRadius: 10,
     border: `1px solid ${C.ac}55`,
-    background: "rgba(255,255,255,0.04)",
+    background: "#F1F5F9",
     color: C.t,
     textDecoration: "none",
     fontSize: 13,

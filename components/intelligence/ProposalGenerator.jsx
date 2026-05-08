@@ -18,17 +18,17 @@ import { computeROI } from "@/data/targetCompanies";
 import { formatWon } from "@/lib/calculate";
 
 const C = {
-  sa: "#141d2e",
-  sh: "#1a2540",
+  sa: "#F1F5F9",
+  sh: "#E2E8F0",
   ac: "#00C9A7",
   bl: "#1D85EB",
   wn: "#F59E0B",
   rd: "#EF4444",
   pp: "#A78BFA",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 export default function ProposalGenerator({
@@ -197,9 +197,9 @@ function ProposalDocument({
         style={{
           padding: 0,
           overflow: "hidden",
-          background: "linear-gradient(180deg, #0c1220 0%, #0a1018 100%)",
+          background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
           border: `1px solid ${C.ac}33`,
-          boxShadow: `0 0 40px ${C.ac}18`,
+          boxShadow: `0 4px 24px rgba(0,0,0,0.06), 0 0 40px ${C.ac}10`,
         }}
       >
         {/* 헤더 */}
@@ -310,7 +310,7 @@ function ProposalDocument({
             padding: "12px",
             borderRadius: 10,
             border: `1px solid ${copied ? C.ac : C.bl2}`,
-            background: copied ? `${C.ac}14` : "#0c1220",
+            background: copied ? `${C.ac}14` : "#F8FAFC",
             color: copied ? C.ac : C.td,
             fontWeight: 700,
             fontSize: 12,
@@ -326,7 +326,7 @@ function ProposalDocument({
             padding: "12px",
             borderRadius: 10,
             border: `1px solid ${C.bl2}`,
-            background: "#0c1220",
+            background: "#F8FAFC",
             color: C.td,
             fontWeight: 700,
             fontSize: 12,
@@ -430,7 +430,7 @@ function ROISection({ proposal, roi }) {
               }}
             />
             <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.03)" }}
+              cursor={{ fill: "#F8FAFC" }}
               contentStyle={{
                 background: C.sa,
                 border: `1px solid ${C.bl2}`,

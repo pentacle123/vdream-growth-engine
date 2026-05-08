@@ -10,25 +10,25 @@ const FALLBACK_HTML = (req) => `<!doctype html>
 <title>브이드림 — 고용부담금 진단</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR',sans-serif;background:#0c1220;color:#E2E8F0;line-height:1.6}
+body{font-family:'Noto Sans KR',sans-serif;background:#F8FAFC;color:#0F172A;line-height:1.6}
 .hero{padding:80px 24px;text-align:center;background:radial-gradient(ellipse at top,rgba(0,201,167,.18),transparent 60%)}
 .tag{font-size:11px;letter-spacing:3px;color:#00C9A7;font-weight:800;margin-bottom:14px}
 h1{font-size:42px;font-weight:900;line-height:1.2;letter-spacing:-1px;background:linear-gradient(135deg,#00C9A7,#1D85EB);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-.sub{font-size:16px;color:#94A3B8;margin:18px auto;max-width:560px}
+.sub{font-size:16px;color:#334155;margin:18px auto;max-width:560px}
 .cta{display:inline-block;margin-top:24px;padding:14px 32px;border-radius:10px;background:linear-gradient(135deg,#00C9A7,#1D85EB);color:#000;font-weight:900;text-decoration:none}
 .section{padding:60px 24px;max-width:960px;margin:0 auto}
-h2{font-size:24px;font-weight:800;margin-bottom:24px;color:#E2E8F0}
+h2{font-size:24px;font-weight:800;margin-bottom:24px;color:#0F172A}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.card{padding:20px;border-radius:14px;background:#141d2e;border:1px solid rgba(255,255,255,.05)}
+.card{padding:20px;border-radius:14px;background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .card h3{font-size:16px;font-weight:800;color:#00C9A7;margin-bottom:8px}
-.card p{font-size:13px;color:#94A3B8}
+.card p{font-size:13px;color:#334155}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;text-align:center}
 .stats .num{font-size:34px;font-weight:900;color:#00C9A7;font-family:'JetBrains Mono',monospace}
 .stats .lbl{font-size:11px;color:#64748B;margin-top:6px}
 .steps{display:flex;gap:10px;flex-wrap:wrap}
-.step{flex:1;min-width:170px;padding:18px;border-radius:12px;background:#141d2e;border-left:3px solid #1D85EB}
+.step{flex:1;min-width:170px;padding:18px;border-radius:12px;background:#F1F5F9;border-left:3px solid #1D85EB}
 .step .w{font-size:11px;color:#1D85EB;font-weight:800;letter-spacing:2px}
-.step .l{font-size:14px;color:#E2E8F0;font-weight:700;margin-top:6px}
+.step .l{font-size:14px;color:#0F172A;font-weight:700;margin-top:6px}
 .cta-final{padding:60px 24px;text-align:center;background:linear-gradient(135deg,rgba(0,201,167,.12),rgba(29,133,235,.12));border-top:1px solid rgba(0,201,167,.3)}
 .tel{display:block;margin-top:14px;font-size:14px;color:#00C9A7;font-family:'JetBrains Mono',monospace}
 @media(max-width:640px){h1{font-size:32px}.stats{grid-template-columns:repeat(2,1fr)}}
@@ -99,9 +99,11 @@ USP: ${(usps || []).join(", ") || "자유"}
 6. CTA: "지금 무료 상담 신청" 버튼 + 전화번호 1644-8619
 
 [디자인]
-- 배경 #0c1220, 액센트 #00C9A7, 보조 #1D85EB, 텍스트 #E2E8F0
-- 폰트 'Noto Sans KR'
-- 다크 테마, 모바일 반응형
+- 배경 #F8FAFC (메인), 카드 #FFFFFF + border #E2E8F0 + box-shadow 0 1px 3px rgba(0,0,0,0.06)
+- 액센트 #00C9A7 (teal), 보조 #1D85EB (blue)
+- 텍스트: 헤딩 #0F172A, 본문 #334155, 보조 #64748B
+- CTA 버튼: linear-gradient(135deg, #00C9A7, #1D85EB), color #FFFFFF
+- 라이트 테마, 깔끔한 SaaS 스타일, 모바일 반응형
 - HTML 응답만 (설명·마크다운 없이). \`\`\` 백틱 금지.`;
 }
 

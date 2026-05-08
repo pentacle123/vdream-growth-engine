@@ -26,8 +26,8 @@ import {
 } from "@/data/industryBenchmarks";
 
 const C = {
-  sa: "#141d2e",
-  sh: "#1a2540",
+  sa: "#F1F5F9",
+  sh: "#E2E8F0",
   ac: "#00C9A7",
   ad: "rgba(0,201,167,0.12)",
   bl: "#1D85EB",
@@ -35,10 +35,10 @@ const C = {
   wn: "#F59E0B",
   rd: "#EF4444",
   pp: "#A78BFA",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 const INDUSTRIES = [
@@ -309,7 +309,7 @@ export default function DiagnosticTab() {
                 padding: "10px",
                 borderRadius: 10,
                 border: `1px solid ${shareState === "copied" ? C.ac : C.bl2}`,
-                background: shareState === "copied" ? `${C.ac}14` : "#0c1220",
+                background: shareState === "copied" ? `${C.ac}14` : "#F8FAFC",
                 color: shareState === "copied" ? C.ac : C.td,
                 fontSize: 12,
                 fontWeight: 700,
@@ -585,7 +585,7 @@ function BenchmarkCard({ yourRate, industry }) {
               tickFormatter={(v) => `${v}%`}
             />
             <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.03)" }}
+              cursor={{ fill: "#F8FAFC" }}
               contentStyle={{
                 background: C.sa,
                 border: `1px solid ${C.bl2}`,
@@ -718,7 +718,7 @@ function VDreamCTA() {
               style={{
                 padding: "6px 10px",
                 borderRadius: 999,
-                background: "rgba(255,255,255,0.04)",
+                background: "#F1F5F9",
                 border: `1px solid ${C.ac}22`,
                 fontSize: 11,
                 fontWeight: 600,
@@ -797,13 +797,13 @@ function VDreamCTA() {
 
 const labelStyle = {
   fontSize: 11,
-  color: "#94A3B8",
+  color: "#334155",
   fontWeight: 600,
   display: "block",
   marginBottom: 4,
 };
 
-const miniLabel = { fontSize: 10, color: "#94A3B8", fontWeight: 600, marginBottom: 2 };
+const miniLabel = { fontSize: 10, color: "#334155", fontWeight: 600, marginBottom: 2 };
 const bigNum = { fontSize: 19, fontWeight: 900, fontFamily: "'JetBrains Mono', monospace" };
 const miniDim = { fontSize: 10, color: "#64748B", marginTop: 2 };
 
@@ -821,9 +821,9 @@ function NumField({ label, unit, placeholder, value, onChange }) {
             width: "100%",
             padding: "9px 34px 9px 12px",
             borderRadius: 8,
-            border: "1px solid rgba(255,255,255,0.08)",
-            background: "#141d2e",
-            color: "#E2E8F0",
+            border: "1px solid #CBD5E1",
+            background: "#F1F5F9",
+            color: "#0F172A",
             fontSize: 14,
             fontFamily: "'JetBrains Mono', monospace",
             outline: "none",
@@ -847,10 +847,10 @@ function NumField({ label, unit, placeholder, value, onChange }) {
   );
 }
 
-function Metric({ label, value, sub, color = "#E2E8F0" }) {
+function Metric({ label, value, sub, color = "#0F172A" }) {
   return (
     <div>
-      <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 600, marginBottom: 3 }}>
+      <div style={{ fontSize: 10, color: "#334155", fontWeight: 600, marginBottom: 3 }}>
         {label}
       </div>
       <div style={{ fontSize: 15, fontWeight: 800, color, fontFamily: "'JetBrains Mono', monospace" }}>

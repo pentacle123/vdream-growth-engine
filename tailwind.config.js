@@ -7,18 +7,21 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: "#050a12",
-        surface: "#0c1220",
-        surfaceAlt: "#141d2e",
-        surfaceHi: "#1a2540",
+        bg: "#FFFFFF",
+        surface: "#F8FAFC",
+        surfaceAlt: "#F1F5F9",
+        surfaceHi: "#E2E8F0",
         accent: "#00C9A7",
         blue: "#1D85EB",
         warn: "#F59E0B",
         red: "#EF4444",
+        green: "#10B981",
         purple: "#A78BFA",
-        text: "#E2E8F0",
-        textDim: "#94A3B8",
+        text: "#0F172A",
+        textDim: "#334155",
         textMute: "#64748B",
+        border: "#E2E8F0",
+        borderStrong: "#CBD5E1",
       },
       fontFamily: {
         sans: ["'Noto Sans KR'", "sans-serif"],

@@ -20,14 +20,14 @@ const NAV_ITEMS = [
 ];
 
 const C = {
-  bg: "#050a12",
-  sf: "#0c1220",
+  bg: "#FFFFFF",
+  sf: "#F8FAFC",
   ac: "#00C9A7",
   bl: "#1D85EB",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 export default function Home() {
@@ -105,10 +105,11 @@ function TopNav({ view, onNavigate }) {
         position: "sticky",
         top: 0,
         zIndex: 50,
-        background: "rgba(5, 10, 18, 0.78)",
+        background: "rgba(255, 255, 255, 0.85)",
         backdropFilter: "blur(20px) saturate(180%)",
         WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        borderBottom: `1px solid ${C.bl2}`,
+        borderBottom: "1px solid #E2E8F0",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
       }}
     >
       <div

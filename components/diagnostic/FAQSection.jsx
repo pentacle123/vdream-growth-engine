@@ -6,18 +6,18 @@ import Spinner from "../ui/Spinner";
 import { FAQ_DATA } from "@/data/faqData";
 
 const C = {
-  bg: "#050a12",
-  sf: "#0c1220",
-  sa: "#141d2e",
+  bg: "#FFFFFF",
+  sf: "#F8FAFC",
+  sa: "#F1F5F9",
   ac: "#00C9A7",
   bl: "#1D85EB",
   pp: "#A78BFA",
   am: "#F59E0B",
   rd: "#EF4444",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 export default function FAQSection({ context }) {

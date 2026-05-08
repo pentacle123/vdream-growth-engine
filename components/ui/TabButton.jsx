@@ -8,7 +8,7 @@ export default function TabButton({ icon, label, active, onClick }) {
         borderRadius: 8,
         border: active ? "1px solid rgba(0,201,167,0.27)" : "1px solid transparent",
         background: active ? "rgba(0,201,167,0.12)" : "transparent",
-        color: active ? "#00C9A7" : "#94A3B8",
+        color: active ? "#00C9A7" : "#334155",
         fontSize: 12,
         fontWeight: active ? 700 : 500,
       }}

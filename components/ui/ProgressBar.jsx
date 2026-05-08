@@ -6,7 +6,7 @@ export default function ProgressBar({ value = 0, color = "#00C9A7", height = 5 }
       style={{
         height,
         borderRadius: height,
-        background: "rgba(255,255,255,0.04)",
+        background: "#F1F5F9",
       }}
     >
       <div

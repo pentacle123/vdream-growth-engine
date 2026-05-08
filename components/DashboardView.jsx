@@ -27,20 +27,20 @@ import {
 } from "@/data/dashboardData";
 
 const C = {
-  bg: "#050a12",
-  sf: "#0c1220",
-  sa: "#141d2e",
-  sh: "#1a2540",
+  bg: "#FFFFFF",
+  sf: "#F8FAFC",
+  sa: "#F1F5F9",
+  sh: "#E2E8F0",
   ac: "#00C9A7",
   bl: "#1D85EB",
   pp: "#A78BFA",
   am: "#F59E0B",
   rd: "#EF4444",
   gn: "#10B981",
-  t: "#E2E8F0",
-  td: "#94A3B8",
+  t: "#0F172A",
+  td: "#334155",
   tm: "#64748B",
-  bl2: "rgba(255,255,255,0.08)",
+  bl2: "#CBD5E1",
 };
 
 export default function DashboardView() {
@@ -305,7 +305,7 @@ function ChannelPerformance() {
               tickFormatter={(v) => v.toLocaleString("ko-KR")}
             />
             <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.03)" }}
+              cursor={{ fill: "#F8FAFC" }}
               contentStyle={{
                 background: C.sa,
                 border: `1px solid ${C.bl2}`,
@@ -461,7 +461,7 @@ function MonthlyTrend() {
               tickFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v)}
             />
             <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.03)" }}
+              cursor={{ fill: "#F8FAFC" }}
               contentStyle={{
                 background: C.sa,
                 border: `1px solid ${C.bl2}`,
@@ -800,7 +800,7 @@ function RevenueShareCalculator() {
               }}
             />
             <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.03)" }}
+              cursor={{ fill: "#F8FAFC" }}
               contentStyle={{
                 background: C.sa,
                 border: `1px solid ${C.bl2}`,

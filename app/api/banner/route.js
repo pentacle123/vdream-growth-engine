@@ -7,9 +7,9 @@ export const runtime = "nodejs";
 
 const fallbackBanner = (req, theme) => {
   const isDark = theme === "dark";
-  const bg = isDark ? "#0c1220" : "#ffffff";
-  const fg = isDark ? "#E2E8F0" : "#0c1220";
-  const sub = isDark ? "#94A3B8" : "#64748B";
+  const bg = isDark ? "#F8FAFC" : "#ffffff";
+  const fg = isDark ? "#0F172A" : "#F8FAFC";
+  const sub = isDark ? "#334155" : "#64748B";
   return `<div style="width:${req.width}px;height:${req.height}px;background:${bg};color:${fg};font-family:system-ui,sans-serif;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:${Math.min(req.width, req.height) * 0.06}px;box-sizing:border-box;border-radius:${Math.min(req.width, req.height) * 0.04}px;background-image:radial-gradient(ellipse at top right,rgba(0,201,167,.18),transparent 60%);overflow:hidden;position:relative;">
   <div style="position:absolute;top:${Math.min(req.width, req.height) * 0.06}px;right:${Math.min(req.width, req.height) * 0.06}px;font-size:${Math.min(req.width, req.height) * 0.06}px;font-weight:900;color:#00C9A7;letter-spacing:1px;">V<span style="color:${fg};">Dream</span></div>
   <div style="font-size:${Math.min(req.width / 16, req.height / 8)}px;font-weight:900;line-height:1.2;letter-spacing:-0.5px;max-width:90%;">${req.headline || "고용부담금 0원 만들기"}</div>
@@ -27,7 +27,7 @@ function buildPrompt({ width, height, headline, subCopy, cta, theme }) {
 - 헤드라인: ${headline}
 - 서브카피: ${subCopy || "(없음, 생략 가능)"}
 - CTA: ${cta || "무료 진단받기"}
-- 테마: ${isDark ? "다크 (배경 #0c1220, 텍스트 #E2E8F0)" : "라이트 (배경 #ffffff, 텍스트 #0c1220)"}
+- 테마: ${isDark ? "다크 (배경 #F8FAFC, 텍스트 #0F172A)" : "라이트 (배경 #ffffff, 텍스트 #F8FAFC)"}
 
 [요구사항]
 - 완전한 인라인 CSS (외부 의존성 없음)
