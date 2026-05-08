@@ -13,7 +13,7 @@ import DataUpload from "@/components/DataUpload";
 
 const NAV_ITEMS = [
   { key: "performance",   label: "DA 퍼포먼스" },
-  { key: "opportunities", label: "기회 발견" },
+  { key: "opportunities", label: "콘텐츠 전략" },
   { key: "diagnose",      label: "AI 진단기" },
   { key: "intelligence",  label: "타겟 인텔리전스" },
   { key: "dashboard",     label: "대시보드" },
