@@ -213,13 +213,13 @@ export default function HomeView({ onNavigate }) {
         </div>
       </section>
 
-      {/* 4 FEATURE CARDS */}
+      {/* 4 FEATURE CARDS — 2×2 grid (auto-fit으로 모바일에선 1열) */}
       <section style={{ padding: "0 0 32px" }}>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: 12,
+            gridTemplateColumns: "repeat(auto-fit, minmax(440px, 1fr))",
+            gap: 14,
           }}
         >
           {features.map((f) => (
